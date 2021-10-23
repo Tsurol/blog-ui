@@ -7,7 +7,7 @@
 					size="small"
 					style="background-color:rgb(255, 255, 255)"
 				></el-avatar>
-				<router-link :to="{ name: 'Home' }" style="text-decoration:none;"><span>&nbsp;网站首页</span></router-link>
+				<router-link :to="{ name: 'Home' }" style="text-decoration:none;color:black;"><span>&nbsp;网站首页</span></router-link>
 			</el-col>
 			<el-col :span="4" class="item">
 				<el-avatar :src="a" size="small" style="background-color:rgb(255, 255, 255)"> </el-avatar>
@@ -15,7 +15,7 @@
 			</el-col>
 			<el-col :span="4" class="item">
 				<el-avatar :src="g" size="small" style="background-color:rgb(255, 255, 255)"> </el-avatar>
-				<router-link :to="{ name: 'Project' }" style="text-decoration:none;"><span>&nbsp;个人项目</span></router-link>
+				<router-link :to="{ name: 'Project' }" style="text-decoration:none;color:black;"><span>&nbsp;个人项目</span></router-link>
 			</el-col>
 			<el-col :span="4" class="item">
 				<el-avatar :src="l" size="small" style="background-color:rgb(255, 255, 255);"> </el-avatar>
