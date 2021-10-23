@@ -190,8 +190,11 @@ export default {
 		.not {
 			font-size: 16px;
 			padding: 8px 0;
+      .link-pro {
+        font-weight:800;
+      }
       .link-pro:hover {
-        background-color: rgb(214, 230, 243);
+        background-color: rgb(231, 239, 245);
       }
 		}
 	}
