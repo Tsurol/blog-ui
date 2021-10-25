@@ -1,29 +1,15 @@
 <template>
 	<div class="home-navbar-box">
 		<el-row>
-			<el-col :span="4" class="item">
+			<el-col v-for="item in allel" :key="item.id" :span="4" class="item">
 				<el-avatar
-					:src="logo1"
+					:src="item.icon"
 					size="small"
 					style="background-color:rgb(255, 255, 255)"
 				></el-avatar>
-				<router-link :to="{ name: 'Home' }" style="text-decoration:none;color:black;"><span>&nbsp;网站首页</span></router-link>
-			</el-col>
-			<el-col :span="4" class="item">
-				<el-avatar :src="a" size="small" style="background-color:rgb(255, 255, 255)"> </el-avatar>
-				<span>&nbsp;技术博客</span>
-			</el-col>
-			<el-col :span="4" class="item">
-				<el-avatar :src="g" size="small" style="background-color:rgb(255, 255, 255)"> </el-avatar>
-				<router-link :to="{ name: 'Project' }" style="text-decoration:none;color:black;"><span>&nbsp;个人项目</span></router-link>
-			</el-col>
-			<el-col :span="4" class="item">
-				<el-avatar :src="l" size="small" style="background-color:rgb(255, 255, 255);"> </el-avatar>
-				<span>&nbsp;留言版块</span>
-			</el-col>
-			<el-col :span="4" class="item">
-				<el-avatar :src="z" size="small" style="background-color:rgb(255, 255, 255)"> </el-avatar>
-				<span>&nbsp;关于作者</span>
+				<router-link :to="item.link" style="text-decoration:none;color:black;"
+					><span>&nbsp;{{ item.title }}</span></router-link
+				>
 			</el-col>
 			<el-col :span="4" class="item">
 				<el-avatar :src="p" size="small" style="background-color:rgb(255, 255, 255)"> </el-avatar>
@@ -33,21 +19,17 @@
 						<i class="el-icon-arrow-down el-icon--right"></i>
 					</span>
 					<el-dropdown-menu slot="dropdown" show-timeout="timeout">
-						<el-dropdown-item>注册</el-dropdown-item>
-						<router-link :to="{ name: 'Login' }" style="text-decoration:none"
-							><el-dropdown-item @click="centerDialogVisible = true"
-								>登录</el-dropdown-item
-							></router-link
+						<router-link
+							v-for="dropdown in dropdownList"
+							:key="dropdown.id"
+							:to="dropdown.link"
+							style="text-decoration:none"
 						>
-						<el-dialog title="提示" :visible.sync="centerDialogVisible" width="30%" center>
-							<span>需要注意的是内容是默认不居中的</span>
-							<span slot="footer" class="dialog-footer">
-								<el-button @click="centerDialogVisible = false">取 消</el-button>
-								<el-button type="primary" @click="centerDialogVisible = false">确 定</el-button>
-							</span>
-						</el-dialog>
-						<el-dropdown-item>个人资料</el-dropdown-item>
-						<el-dropdown-item divided>退出登录</el-dropdown-item>
+							<el-dropdown-item>{{ dropdown.title }}</el-dropdown-item>
+						</router-link>
+						<router-link style="text-decoration:none" :to="{ name: 'Login' }">
+							<el-dropdown-item divided>退出登录</el-dropdown-item>
+						</router-link>
 					</el-dropdown-menu>
 				</el-dropdown>
 			</el-col>
@@ -59,14 +41,21 @@
 export default {
 	data() {
 		return {
+			allel: [
+				{ id: 1, title: '网站首页', link: { name: 'Home' }, icon: '/static/wbsite.jpg' },
+				{ id: 2, title: '技术博客', link: { name: 'Home' }, icon: '/static/apng.png' },
+				{ id: 3, title: '个人项目', link: { name: 'Project' }, icon: '/static/githubb.png' },
+				{ id: 4, title: '留言板块', link: { name: 'Home' }, icon: '/static/l.png' },
+				{ id: 5, title: '关于作者', link: { name: 'Home' }, icon: '/static/z.png' },
+			],
+			dropdownList: [
+				{ id: 1, title: '注册', link: { name: 'Login' }},
+				{ id: 2, title: '登录', link: { name: 'Login' }},
+				{ id: 3, title: '个人资料', link: { name: 'Login' }},
+			],
 			centerDialogVisible: false,
 			timeout: 150,
 			p: '/static/p.png',
-			a: '/static/apng.png',
-			l: '/static/l.png',
-			g: '/static/githubb.png',
-			z: '/static/z.png',
-			logo1: '/static/wbsite.jpg',
 			activeName: 'second',
 			invt: '',
 		}
@@ -77,7 +66,8 @@ export default {
 
 <style lang="less">
 .home-navbar-box {
-	font-family: "Consolas", "Microsoft JhengHei", "Apple LiGothic Medium,Microsoft YaHei", "微软雅黑", "Arial", sans-serif;
+	font-family: 'Consolas', 'Microsoft JhengHei', 'Apple LiGothic Medium,Microsoft YaHei', '微软雅黑',
+		'Arial', sans-serif;
 	// color: rgb(126, 122, 128);
 	text-align: center;
 	padding-bottom: 5px;
@@ -98,7 +88,8 @@ export default {
 		cursor: pointer;
 	}
 	.el-dropdown {
-		font-family: "Consolas", "Microsoft JhengHei", "Apple LiGothic Medium,Microsoft YaHei", "微软雅黑", "Arial", sans-serif;
+		font-family: 'Consolas', 'Microsoft JhengHei', 'Apple LiGothic Medium,Microsoft YaHei',
+			'微软雅黑', 'Arial', sans-serif;
 		color: black;
 	}
 	.el-icon-arrow-down {
@@ -131,7 +122,8 @@ export default {
 		}
 		.el-dropdown {
 			font-size: 15px;
-			font-family: "Consolas", "Microsoft JhengHei", "Apple LiGothic Medium,Microsoft YaHei", "微软雅黑", "Arial", sans-serif;
+			font-family: 'Consolas', 'Microsoft JhengHei', 'Apple LiGothic Medium,Microsoft YaHei',
+				'微软雅黑', 'Arial', sans-serif;
 			color: black;
 		}
 		.el-popper {

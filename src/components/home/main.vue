@@ -23,7 +23,7 @@
 					</el-card>
 				</div>
 			</el-col>
-			<el-col :md="10" class="main">
+			<el-col :md="11" class="main">
 				<div class="content">
 					<div class="notice">
 						<el-card>
