@@ -50,7 +50,6 @@
 </template>
 
 <script>
-import {debounce} from 'lodash'
 export default {
 	data() {
 		return {

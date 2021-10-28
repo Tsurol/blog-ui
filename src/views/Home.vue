@@ -3,22 +3,22 @@
 		<!-- 顶部导航 -->
 		<Navbar />
 		<!-- 轮播图 -->
-		<Banner />
+		<Main />
 	</div>
 </template>
 
 <script>
 // @ is an alias to /src
 import Navbar from '@/components/home/navbar'
-import Banner from '@/components/home/main'
+import Main from '@/components/home/main'
 
 export default {
 	name: 'Home',
 	components: {
 		// 顶部导航
 		Navbar,
-		// 轮播图
-		Banner,
+		Main,
+		// Banner:()=>import("@/components/home/main")
 	},
 }
 </script>
