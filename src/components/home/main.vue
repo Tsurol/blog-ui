@@ -1,16 +1,7 @@
 <template>
-	<div class="home-banner-box">
-		<el-row :gutter="25" type="flex" justify="center" style="margin-left:0;margin-right:0">
+	<div class="home-search-box">
+		<el-row type="flex" justify="center" :gutter="25" style="margin-left:0;margin-right:0">
 			<el-col :md="5" class="left">
-				<div class="serach">
-					<el-input
-						placeholder="输入你想搜索的内容"
-						v-model="input"
-						clearable
-						size="medium"
-					></el-input>
-					<el-button icon="el-icon-search" size="medium"></el-button>
-				</div>
 				<div class="card">
 					<el-card class="box-card" shadow="always">
 						<div slot="header" class="clearfix hot-recommoned">
@@ -25,6 +16,13 @@
 				</div>
 			</el-col>
 			<el-col :md="11" class="main">
+				<div class="input-suffix">
+					<el-input
+						suffix-icon="el-icon-search"
+						v-model="input"
+						placeholder="搜一搜你感兴趣的吧"
+					></el-input>
+				</div>
 				<div class="content">
 					<div class="content-item" v-for="blogitem in blogList" :key="blogitem.id">
 						<el-card>
@@ -43,7 +41,11 @@
 							<span class="time">
 								<div style="color: #999;font-size:12.5px;">
 									<i class="el-icon-user">{{ blogitem.user }}</i>
-									<span class="iconfont icon-dianzan_huaban" style="font-size:12.5px;margin-right:10px">21</span>
+									<span
+										class="iconfont icon-dianzan_huaban"
+										style="font-size:12.5px;margin-right:10px"
+										>21</span
+									>
 									<i class="el-icon-chat-line-square">{{ blogitem.comment_count }}条评论</i>
 									<i class="el-icon-timer">{{ blogitem.created_at }}</i>
 								</div>
@@ -120,6 +122,7 @@ import { OK, BAD_REQUEST } from '@/utils/constants'
 export default {
 	data() {
 		return {
+			input: '',
 			activities: [
 				{
 					content: '开始内测',
@@ -135,22 +138,12 @@ export default {
 				},
 			],
 			notice: '网站正在开发中，请积极反馈BUG~',
-			blogList: [],
-			input: '',
 			hotList: [],
-			topList: [],
 			tagList: [],
+			blogList: [],
 		}
 	},
 	methods: {
-		openvx() {
-			this.$notify({
-				dangerouslyUseHTMLString: true,
-				message: '<strong>微信号：Tsurol</strong>',
-				position: 'bottom-left',
-				customClass: 'background',
-			})
-		},
 		getBlogList() {
 			ajax.get(BlogApis.blogListUrl).then(
 				(res) => {
@@ -232,22 +225,19 @@ export default {
 		},
 	},
 	created() {
-		this.getBlogList()
 		this.getHotList()
 		this.getTagList()
+		this.getBlogList()
 	},
 }
 </script>
 
 <style lang="less">
-.home-banner-box {
+.home-search-box {
 	font-family: 'Consolas', 'Microsoft JhengHei', 'Apple LiGothic Medium,Microsoft YaHei', '微软雅黑',
 		'Arial', sans-serif;
-	padding-top: 15px;
-	// margin-top: 15px;
-	// background-image: url(/static/background.png);
-	background-size: cover;
-	background-position: center;
+	// padding: 40px 0;
+	padding-top: 20px;
 	.left {
 		.card {
 			.el-card__header {
@@ -284,6 +274,7 @@ export default {
 			border-radius: 8px;
 		}
 	}
+
 	.right {
 		.tag-list {
 			margin-top: 10px;
@@ -317,6 +308,7 @@ export default {
 			}
 		}
 	}
+
 	.el-main {
 		margin-top: 5px;
 	}
@@ -348,24 +340,16 @@ export default {
 			}
 		}
 	}
-	.serach {
-		display: flex;
-		input {
-			border-top-left-radius: 30px;
-			border-bottom-left-radius: 30px;
-		}
-		button {
-			float: right;
-			padding: 0 17px;
-			border-top-right-radius: 30px;
-			border-bottom-right-radius: 30px;
-		}
-		.el-icon-search {
-			color: #475669;
+	.input-suffix {
+		.el-input {
+			margin-bottom: 15px;
+			i {
+				cursor: pointer;
+			}
 		}
 	}
 	.card {
-		margin-top: 10px;
+		// margin-top: 10px;
 		.recent-hot {
 			color: rgb(136, 136, 136);
 		}

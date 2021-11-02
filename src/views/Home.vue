@@ -1,8 +1,6 @@
 <template>
 	<div class="page-home">
-		<!-- 顶部导航 -->
 		<Navbar />
-		<!-- 轮播图 -->
 		<Main />
 	</div>
 </template>
@@ -15,10 +13,8 @@ import Main from '@/components/home/main'
 export default {
 	name: 'Home',
 	components: {
-		// 顶部导航
 		Navbar,
 		Main,
-		// Banner:()=>import("@/components/home/main")
 	},
 }
 </script>
@@ -26,5 +22,8 @@ export default {
 <style lang="less">
 .page-home {
 	background-color: rgb(245, 245, 245);
+	background-image: url(/static/background.png);
+	background-size: cover;
+	background-position: center;
 }
 </style>
