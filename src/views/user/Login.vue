@@ -5,10 +5,10 @@
 				<el-alert title="游客您好，欢迎登录！" type="success" center></el-alert>
 				<div class="login-form">
 					<el-tabs v-model="activeName">
-						<el-tab-pane label="账号登录" name="username">
+						<el-tab-pane label="密码登录" name="username">
 							<!-- 登陆头区域 -->
 							<div class="login-header">
-								<h2 class="title" style="margin:0">账号登录</h2>
+								<h2 class="title" style="margin:0">密码登录</h2>
 							</div>
 							<!-- //登陆头区域 -->
 							<!-- 登录表单 -->
@@ -137,6 +137,7 @@
 <script>
 import { ajax } from '@/utils/ajax'
 import { UserApis } from '@/utils/apis'
+import { CREATED, BAD_REQUEST, NOT_FOUND, TWO_MANY_REQUESTS } from '@/utils/constants'
 
 export default {
 	data() {
@@ -184,19 +185,32 @@ export default {
 				})
 				.then(
 					(res) => {
-						console.log('res:', res)
-						if (res.data.code === 201) {
+						if (res.data.code === CREATED) {
 							this.$message.success('请查收验证码')
 							this.code = res.data.body.verify_code
 							console.log(this.code)
 						}
 					},
 					(error) => {
-						this.$message({
-							showClose: true,
-							message: '邮箱格式不正确，请重试',
-							type: 'error',
-						})
+						if (error.data.code === TWO_MANY_REQUESTS) {
+							this.$message({
+								showClose: true,
+								message: '您点击太快啦，休息一下',
+								type: 'error',
+							})
+						} else if (error.data.code === BAD_REQUEST) {
+							this.$message({
+								showClose: true,
+								message: res.data.message,
+								type: 'error',
+							})
+						} else {
+							this.$message({
+								showClose: true,
+								message: '服务器出现错误，请联系作者',
+								type: 'error',
+							})
+						}
 						this.formCode.email = ''
 					}
 				)
@@ -231,20 +245,65 @@ export default {
 				})
 				.then(
 					(res) => {
-						if (res.data.code === 201) {
-							console.log(res.data)
+						if (res.data.code === CREATED) {
 							window.localStorage.setItem('token', res.data.access)
 							this.$store.commit('updateUserinfo', res.data)
 							this.$router.push({ name: 'Home' })
 						}
 					},
 					(error) => {
-						this.$message({
-							showClose: true,
-							message: '用户名或密码不正确，请重试',
-							type: 'error',
-						})
-						// this.$message.error('用户名或密码不正确，请重试')
+						if (error.data.code === NOT_FOUND) {
+							this.$message({
+								showClose: true,
+								message: res.data.message,
+								type: 'error',
+							})
+						} else if (error.data.code === BAD_REQUEST) {
+							this.$message({
+								showClose: true,
+								message: res.data.message,
+								type: 'error',
+							})
+						} else {
+							this.$message({
+								showClose: true,
+								message: '服务器出现错误，请联系作者',
+								type: 'error',
+							})
+						}
+						this.formLogin.username = ''
+						this.formLogin.pwd = ''
+					}
+				)
+		},
+		Authication1() {
+			ajax
+				.post(UserApis.emailLoginUrl, {
+					email: this.formCode.email,
+					code: this.formCode.code,
+				})
+				.then(
+					(res) => {
+						if (res.data.code === CREATED) {
+							window.localStorage.setItem('token', res.data.access)
+							this.$store.commit('updateUserinfo', res.data)
+							this.$router.push({ name: 'Home' })
+						}
+					},
+					(error) => {
+						if (res.data.code === BAD_REQUEST) {
+							this.$message({
+								showClose: true,
+								message: res.data.message,
+								type: 'error',
+							})
+						} else {
+							this.$message({
+								showClose: true,
+								message: '服务器出现错误，请联系作者',
+								type: 'error',
+							})
+						}
 						this.formLogin.username = ''
 						this.formLogin.pwd = ''
 					}
@@ -255,7 +314,7 @@ export default {
 				if (valid) {
 					this.Authication()
 				} else {
-					console.log('error submit!!')
+					console.log('前端表单验证不通过')
 					return false
 				}
 			})
@@ -263,17 +322,9 @@ export default {
 		submitForm1(formCode) {
 			this.$refs[formCode].validate((valid) => {
 				if (valid) {
-					if (this.code === formCode.code) {
-						this.$router.push({ name: 'Home' })
-					} else {
-						this.$message({
-							showClose: true,
-							message: '邮箱或验证码不正确，请重试',
-							type: 'error',
-						})
-					}
+					this.Authication1()
 				} else {
-					console.log('error submit!!')
+					console.log('前端表单验证不通过')
 					return false
 				}
 			})
@@ -325,7 +376,6 @@ export default {
 	}
 	.btn-login {
 		border-radius: 20px;
-		width: 30%;
 	}
 	.el-form-item__content {
 		margin-left: 0;

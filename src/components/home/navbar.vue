@@ -46,12 +46,11 @@ export default {
 				{ id: 2, title: '技术博客', link: { name: 'Home' }, icon: '/static/apng.png' },
 				{ id: 3, title: '个人项目', link: { name: 'Project' }, icon: '/static/githubb.png' },
 				{ id: 4, title: '留言板块', link: { name: 'Home' }, icon: '/static/l.png' },
-				{ id: 5, title: '关于作者', link: { name: 'Home' }, icon: '/static/z.png' },
+				{ id: 5, title: '每日壹题', link: { name: 'Home' }, icon: '/static/z.png' },
 			],
 			dropdownList: [
-				{ id: 1, title: '注册', link: { name: 'Login' }},
-				{ id: 2, title: '登录', link: { name: 'Login' }},
-				{ id: 3, title: '个人资料', link: { name: 'Login' }},
+				{ id: 1, title: '注册', link: { name: 'Register' } },
+				{ id: 2, title: '登录', link: { name: 'Login' } },
 			],
 			centerDialogVisible: false,
 			timeout: 150,
@@ -68,9 +67,12 @@ export default {
 .home-navbar-box {
 	font-family: 'Consolas', 'Microsoft JhengHei', 'Apple LiGothic Medium,Microsoft YaHei', '微软雅黑',
 		'Arial', sans-serif;
-	// color: rgb(126, 122, 128);
+	padding: 5px 0;
+	position: sticky;
+	z-index: 999;
+	top: 0;
+	box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
 	text-align: center;
-	padding-bottom: 5px;
 	background-color: #fff;
 	font-size: 15px;
 	.el-row {
@@ -100,35 +102,6 @@ export default {
 	}
 	span:hover {
 		color: rgb(128, 179, 221);
-	}
-}
-@media screen and (max-width: 768px) {
-	.home-navbar-box {
-		font-size: 15px;
-		.el-row {
-			flex-direction: column;
-			align-items: center;
-			.el-col-4 {
-				justify-content: left;
-				width: 110px;
-				padding: 10px 0;
-			}
-		}
-		.el-avatar--small {
-			width: 40px;
-		}
-		.el-icon-arrow-down {
-			display: none;
-		}
-		.el-dropdown {
-			font-size: 15px;
-			font-family: 'Consolas', 'Microsoft JhengHei', 'Apple LiGothic Medium,Microsoft YaHei',
-				'微软雅黑', 'Arial', sans-serif;
-			color: black;
-		}
-		.el-popper {
-			margin-top: 5px;
-		}
 	}
 }
 </style>
