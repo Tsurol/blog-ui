@@ -1,7 +1,9 @@
 <template>
 	<div class="page-home">
 		<Navbar />
-		<Main />
+		<transition name="el-fade-in-linear">
+			<Main v-show="show" />
+		</transition>
 	</div>
 </template>
 
@@ -12,9 +14,15 @@ import Main from '@/components/home/main'
 
 export default {
 	name: 'Home',
+	data: () => ({
+		show: false,
+	}),
 	components: {
 		Navbar,
 		Main,
+	},
+	mounted() {
+		this.show = true
 	},
 }
 </script>

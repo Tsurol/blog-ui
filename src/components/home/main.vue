@@ -3,9 +3,9 @@
 		<el-row type="flex" justify="center" :gutter="25" style="margin-left:0;margin-right:0">
 			<el-col :md="5" class="left">
 				<div class="card">
-					<el-card class="box-card" shadow="always">
+					<el-card class="box-card" shadow="always" style="border:none">
 						<div slot="header" class="clearfix hot-recommoned">
-							<i class="el-icon-star-off" style="color:rgb(231,35,74)"></i>
+							<i class="el-icon-star-off" style="color:rgb(231,35,74);"></i>
 							<span class="recent-hot">近期热门</span>
 						</div>
 						<div v-for="(hotitem, index) in hotList" :key="hotitem.id" class="item">
@@ -42,9 +42,10 @@
 								<div style="color: #999;font-size:12.5px;">
 									<i class="el-icon-user">{{ blogitem.user }}</i>
 									<span
+										@click="loveBlog"
 										class="iconfont icon-dianzan_huaban"
 										style="font-size:12.5px;margin-right:10px"
-										>21</span
+										>{{ blogitem.love_count }}</span
 									>
 									<i class="el-icon-chat-line-square">{{ blogitem.comment_count }}条评论</i>
 									<i class="el-icon-timer">{{ blogitem.created_at }}</i>
@@ -87,12 +88,12 @@
 					</el-card>
 				</div>
 				<!-- <div class="clock">
-					<div class="head-time">
-						<div class="day">2021/11/1</div>
-						<div class="week">Monday</div>
-					</div>
-					<div class="main-time">17:49:48</div>
-				</div> -->
+						<div class="head-time">
+							<div class="day">2021/11/1</div>
+							<div class="week">Monday</div>
+						</div>
+						<div class="main-time">17:49:48</div>
+					</div> -->
 				<div class="block">
 					<el-timeline>
 						<el-timeline-item
@@ -117,7 +118,7 @@
 <script>
 import { ajax } from '@/utils/ajax'
 import { BlogApis } from '@/utils/apis'
-import { OK, BAD_REQUEST } from '@/utils/constants'
+import { OK, BAD_REQUEST, Unauthorized } from '@/utils/constants'
 
 export default {
 	data() {
@@ -138,8 +139,8 @@ export default {
 				},
 			],
 			notice: '网站正在开发中，请积极反馈BUG~',
-			hotList: [],
 			tagList: [],
+			hotList: [],
 			blogList: [],
 		}
 	},
@@ -149,7 +150,6 @@ export default {
 				(res) => {
 					if (res.data.code === OK) {
 						this.blogList = res.data.body.data
-						console.log(this.blogList)
 					}
 				},
 				(error) => {
@@ -223,11 +223,38 @@ export default {
 				}
 			)
 		},
+		loveBlog() {
+			ajax.post(BlogApis.loveBlogUrl).then(
+				(res) => {
+					if (res.data.code === CREATED) {
+						console.log('操作成功')
+					}
+				},
+				(error) => {
+					if (error.data.code === Unauthorized) {
+						this.$message({
+							showClose: true,
+							message: res.data.message,
+							type: '请登录',
+						})
+					} else {
+						this.$message({
+							showClose: true,
+							message: '服务器出现错误，请联系作者',
+							type: 'error',
+						})
+					}
+				}
+			)
+		},
 	},
 	created() {
 		this.getHotList()
 		this.getTagList()
 		this.getBlogList()
+	},
+	mounted() {
+		// this.show = true
 	},
 }
 </script>
@@ -238,6 +265,7 @@ export default {
 		'Arial', sans-serif;
 	// padding: 40px 0;
 	padding-top: 20px;
+
 	.left {
 		.card {
 			.el-card__header {
@@ -351,7 +379,8 @@ export default {
 	.card {
 		// margin-top: 10px;
 		.recent-hot {
-			color: rgb(136, 136, 136);
+			color: rgb(59, 58, 58);
+			// font-weight: bold;
 		}
 	}
 	.el-card__body {

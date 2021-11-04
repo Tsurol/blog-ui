@@ -240,13 +240,13 @@ export default {
 		Authication() {
 			ajax
 				.post(UserApis.userLoginUrl, {
-					email: this.formLogin.username,
+					username: this.formLogin.username,
 					password: this.formLogin.pwd,
 				})
 				.then(
 					(res) => {
 						if (res.data.code === CREATED) {
-							window.localStorage.setItem('token', res.data.access)
+							window.localStorage.setItem('access_token', res.data.access)
 							this.$store.commit('updateUserinfo', res.data)
 							this.$router.push({ name: 'Home' })
 						}
@@ -285,7 +285,7 @@ export default {
 				.then(
 					(res) => {
 						if (res.data.code === CREATED) {
-							window.localStorage.setItem('token', res.data.access)
+							window.localStorage.setItem('access_token', res.data.access)
 							this.$store.commit('updateUserinfo', res.data)
 							this.$router.push({ name: 'Home' })
 						}

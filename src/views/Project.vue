@@ -1,76 +1,79 @@
 <template>
 	<div class="page-project">
 		<Navbar />
-		<el-row
-			:gutter="20"
-			type="flex"
-			style="margin-left:0;margin-right:0;margin-top:15px"
-			justify="space-around"
-		>
-			<el-col :md="5" class="left">
-				开发中
-			</el-col>
-			<el-col :md="11" class="main">
-				<div class="content">
-					<div class="notice">
-						<el-card v-for="project in projectList" :key="project.id">
-							<div class="not" style="border-bottom: 1px solid rgb(192,196,204);">
-								<a
-									class="link-pro"
-									style="text-decoration:none;color:black"
-									:href="project.link"
-									target="_blank"
-									>{{ project.not }}
-								</a>
-							</div>
-							<div class="not-content" style="margin-top:10px;line-height:30px">
-								{{ project.content }}
-							</div>
-							<span class="time">
-								<div style="color: #999;font-size:12px;margin-top:5px">
-									<i class="el-icon-timer"></i>
-									{{ project.time }}
+		<transition name="el-fade-in-linear">
+			<el-row
+				:gutter="25"
+				type="flex"
+				style="margin-left:0;margin-right:0;margin-top:15px"
+				justify="space-around"
+				v-show="show"
+			>
+				<el-col :md="5" class="left">
+					开发中
+				</el-col>
+				<el-col :md="11" class="main">
+					<div class="content">
+						<div class="notice">
+							<el-card v-for="project in projectList" :key="project.id">
+								<div class="not" style="border-bottom: 1px solid rgb(192,196,204);">
+									<a
+										class="link-pro"
+										style="text-decoration:none;color:black"
+										:href="project.link"
+										target="_blank"
+										>{{ project.not }}
+									</a>
 								</div>
-							</span>
-						</el-card>
-					</div>
-				</div>
-			</el-col>
-			<el-col :md="4" class="right">
-				<div class="author">
-					<el-avatar :src="author" class="avatar"></el-avatar>
-					<div class="desc">一个程序员的成长之路</div>
-					<div class="tag">
-						<el-tag
-							size="mini"
-							v-for="tagitem in TagList"
-							:key="tagitem.id"
-							:type="tagitem.type"
-							hit
-							>{{ tagitem.content }}</el-tag
-						>
-					</div>
-					<div class="tatistics">
-						<div class="blog">
-							<span>博客</span>
-							<span class="blog-count">{{ blogcount }}</span>
-						</div>
-						<div class="comment">
-							<span>评论</span>
-							<span class="comment-count">{{ commentcount }}</span>
+								<div class="not-content" style="margin-top:10px;line-height:30px">
+									{{ project.content }}
+								</div>
+								<span class="time">
+									<div style="color: #999;font-size:12px;margin-top:5px">
+										<i class="el-icon-timer"></i>
+										{{ project.time }}
+									</div>
+								</span>
+							</el-card>
 						</div>
 					</div>
-					<div class="contant">
-						<el-button type="text" @click="openvx" style="margin:0;padding:0"
-							><el-avatar :src="wechat" size="small"></el-avatar
-						></el-button>
-						<a v-for="contant in contantList" :key="contant.id" :href="contant.link" target="_blank">
-							<el-avatar :src="contant.icon" size="small"></el-avatar>
-						</a>
+				</el-col>
+				<el-col :md="4" class="right">
+					<div class="author">
+						<el-avatar :src="author" class="avatar"></el-avatar>
+						<div class="desc">一个程序员的成长之路</div>
+						<div class="tag">
+							<el-tag
+								size="mini"
+								v-for="tagitem in TagList"
+								:key="tagitem.id"
+								:type="tagitem.type"
+								hit
+								>{{ tagitem.content }}</el-tag
+							>
+						</div>
+						<div class="tatistics">
+							<div class="blog">
+								<span>博客</span>
+								<span class="blog-count">{{ blogcount }}</span>
+							</div>
+							<div class="comment">
+								<span>评论</span>
+								<span class="comment-count">{{ commentcount }}</span>
+							</div>
+						</div>
+						<div class="contant">
+							<el-button type="text" @click="openvx" style="margin:0;padding:0"
+								><el-avatar :src="wechat" size="small"></el-avatar
+							></el-button>
+							<a v-for="contant in contantList" :key="contant.id" :href="contant.link" target="_blank">
+								<el-avatar :src="contant.icon" size="small"></el-avatar>
+							</a>
+						</div>
 					</div>
-				</div>
-			</el-col>
-		</el-row>
+				</el-col>
+			</el-row>
+		</transition>
 	</div>
 </template>
 
@@ -83,6 +86,7 @@ export default {
 	},
 	data() {
 		return {
+			show: false,
 			projectList: [
 				{
 					id: 1,
@@ -143,6 +147,9 @@ export default {
 			})
 		},
 	},
+	mounted() {
+		this.show = true;
+	}
 }
 </script>
 
