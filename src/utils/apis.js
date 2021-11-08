@@ -21,7 +21,11 @@ const BlogApis = {
 	// 标签列表接口
 	tagListUrl: apiHost + '/blog/tag/list/',
 	// 点赞博客接口
-	loveBlogUrl: apiHost + '/blog/blogsite/love/'
+	loveBlogUrl: apiHost + '/blog/blogsite/love/',
+	// 通过标签查询博客接口
+	blogByTagUrl: apiHost + '/blog/tag/blog/list/',
+	// 查询博客总评论数
+	commentCountUrl: apiHost + '/blog/comment/count/',
 }
 
 

@@ -50,7 +50,7 @@
 										>遇到问题</el-button
 									>
 									<el-dialog :visible.sync="dialogVisible" width="30%" center>
-										<span>如遇BUG，请积极联系作者反馈~</span>
+										<span>如遇BUG，请联系作者QQ:2656155887</span>
 										<span slot="footer" class="dialog-footer">
 											<el-button type="primary" @click="dialogVisible = false">确 定</el-button>
 										</span>
@@ -141,6 +141,19 @@ import { CREATED, BAD_REQUEST, NOT_FOUND, TWO_MANY_REQUESTS } from '@/utils/cons
 
 export default {
 	data() {
+		var checkEmail = (rule, value, callback) => {
+			const mailReg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/
+			if (!value) {
+				return callback(new Error('邮箱不能为空'))
+			}
+			setTimeout(() => {
+				if (mailReg.test(value)) {
+					callback()
+				} else {
+					callback(new Error('请输入正确的邮箱格式'))
+				}
+			}, 100)
+		}
 		return {
 			isCodeSend: false,
 			sendBtnText: '发送验证码',
@@ -162,7 +175,10 @@ export default {
 				pwd: [{ required: true, message: '密码不能为空', trigger: 'blur' }],
 			},
 			rulesCode: {
-				email: [{ required: true, message: '邮箱不能为空', trigger: 'blur' }],
+				email: [
+					{ validator: checkEmail, trigger: 'blur' },
+					{ required: true, message: '邮箱不能为空', trigger: 'blur' },
+				],
 				code: [{ required: true, message: '验证码不能为空', trigger: 'blur' }],
 			},
 		}
@@ -196,18 +212,6 @@ export default {
 							this.$message({
 								showClose: true,
 								message: '您点击太快啦，休息一下',
-								type: 'error',
-							})
-						} else if (error.data.code === BAD_REQUEST) {
-							this.$message({
-								showClose: true,
-								message: res.data.message,
-								type: 'error',
-							})
-						} else {
-							this.$message({
-								showClose: true,
-								message: '服务器出现错误，请联系作者',
 								type: 'error',
 							})
 						}
@@ -246,31 +250,13 @@ export default {
 				.then(
 					(res) => {
 						if (res.data.code === CREATED) {
-							window.localStorage.setItem('access_token', res.data.access)
-							this.$store.commit('updateUserinfo', res.data)
+							console.log(res.data.body.access)
+							window.localStorage.setItem('access', 'Bearer ' + res.data.body.access)
+							// this.$store.commit('updateUserinfo', res.data)
 							this.$router.push({ name: 'Home' })
 						}
 					},
 					(error) => {
-						if (error.data.code === NOT_FOUND) {
-							this.$message({
-								showClose: true,
-								message: res.data.message,
-								type: 'error',
-							})
-						} else if (error.data.code === BAD_REQUEST) {
-							this.$message({
-								showClose: true,
-								message: res.data.message,
-								type: 'error',
-							})
-						} else {
-							this.$message({
-								showClose: true,
-								message: '服务器出现错误，请联系作者',
-								type: 'error',
-							})
-						}
 						this.formLogin.username = ''
 						this.formLogin.pwd = ''
 					}
@@ -285,25 +271,12 @@ export default {
 				.then(
 					(res) => {
 						if (res.data.code === CREATED) {
-							window.localStorage.setItem('access_token', res.data.access)
-							this.$store.commit('updateUserinfo', res.data)
+							window.localStorage.setItem('access', 'Bearer ' + res.data.body.access)
+							// this.$store.commit('updateUserinfo', res.data)
 							this.$router.push({ name: 'Home' })
 						}
 					},
 					(error) => {
-						if (res.data.code === BAD_REQUEST) {
-							this.$message({
-								showClose: true,
-								message: res.data.message,
-								type: 'error',
-							})
-						} else {
-							this.$message({
-								showClose: true,
-								message: '服务器出现错误，请联系作者',
-								type: 'error',
-							})
-						}
 						this.formLogin.username = ''
 						this.formLogin.pwd = ''
 					}
@@ -382,12 +355,12 @@ export default {
 	}
 	.login-footer {
 		margin-top: 20px;
-		color: gray;
+		color: rgb(150, 143, 143);
 		text-align: center;
 	}
 	.login-footer span {
 		padding: 15px;
-		font-size: 13px;
+		font-size: 12px;
 	}
 }
 </style>

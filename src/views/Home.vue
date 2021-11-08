@@ -29,9 +29,11 @@ export default {
 
 <style lang="less">
 .page-home {
-	background-color: rgb(245, 245, 245);
-	background-image: url(/static/background.png);
-	background-size: cover;
-	background-position: center;
+	// background-color: rgb(245, 245, 245);
+	// background-image: url(/static/background.png);
+	// background-size: cover;
+	// background-position: center;
+	// height: 1090px;
+	background-color: #f5f5f5;
 }
 </style>

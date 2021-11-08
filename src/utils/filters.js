@@ -35,13 +35,3 @@ Vue.filter('formatDate', function(date) {
 	}
 	return dateFormat('YYYY-mm-dd HH:MM:SS', date)
 })
-
-// Vue.filter('formatDateMS', (date) => {
-// 	if (!date) {
-// 		date = new Date()
-// 	} else if (typeof date === 'string') {
-// 		date = new Date(date)
-// 	}
-// 	return dateFormat('YYYY-mm-dd HH:MM:SS:ms', date)
-// })
-
