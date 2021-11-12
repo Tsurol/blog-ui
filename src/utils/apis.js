@@ -1,4 +1,5 @@
 const apiHost = 'http://localhost:8080/api'
+// const apiHost = '/api'
 
 /**用户模块 */
 const UserApis = {

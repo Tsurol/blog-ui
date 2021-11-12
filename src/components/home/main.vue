@@ -29,7 +29,7 @@
 				</div>
 			</el-col>
 			<el-col :md="11" class="main">
-				<div class="input-suffix">
+				<div class="input-suffix" id="input-box">
 					<el-input
 						v-model="search"
 						placeholder="搜一搜你感兴趣的吧"
@@ -84,6 +84,16 @@
 						</div>
 					</div>
 				</transition>
+				<div class="pagination">
+					<el-pagination
+						@current-change="handleCurrentChange"
+						layout="prev, pager, next"
+						:total="this.blogcount"
+						:page-size="this.limit"
+						background
+						:hide-on-single-page="true"
+					></el-pagination>
+				</div>
 			</el-col>
 			<el-col :md="5" class="right">
 				<div class="author">
@@ -137,7 +147,7 @@
 				<div class="tag-list">
 					<el-card>
 						<div class="tag-top">
-							<i class="el-icon-price-tag"></i><span style="font-weight: bold;">标签</span>
+							<i class="el-icon-price-tag"></i><span style="font-weight: bold;">标签云</span>
 						</div>
 						<div class="tag-body">
 							<span
@@ -234,11 +244,13 @@ export default {
 			author: '/static/logo.png',
 			wechat: '/static/wechat.png',
 			medium: 'medium',
-			blogcount: '',
+			blogcount: 0,
 			commentcount: '',
 			nowTime: '',
 			nowSecond: '',
 			nowWeek: '',
+			current_page: 1,
+			limit: 5,
 		}
 	},
 	inject: ['reload'],
@@ -251,13 +263,40 @@ export default {
 				customClass: 'background',
 			})
 		},
+		handleCurrentChange(val) {
+			let top = document.getElementById('input-box')
+			this.current_page = val
+			this.getBlogList()
+			this.timer = setTimeout(() => {
+				//设置延迟执行
+				document.documentElement.scrollTop = top
+			}, 10)
+		},
 		getBlogList() {
-			ajax.get(BlogApis.blogListUrl).then((res) => {
-				if (res.data.code === OK) {
-					this.blogList = res.data.body.data
-					this.blogcount = this.blogList.length
-				}
-			})
+			ajax
+				.get(BlogApis.blogListUrl, {
+					params: {
+						page: this.current_page,
+					},
+				})
+				.then((res) => {
+					if (res.data.code === OK) {
+						this.blogList = res.data.body.data
+					}
+				})
+		},
+		getBlogCount() {
+			ajax
+				.get(BlogApis.blogListUrl, {
+					params: {
+						limit: 999,
+					},
+				})
+				.then((res) => {
+					if (res.data.code === OK) {
+						this.blogcount = res.data.body.data.length
+					}
+				})
 		},
 		getHotList() {
 			ajax
@@ -386,6 +425,7 @@ export default {
 		this.getTagList()
 		this.getBlogList()
 		this.queryCommentCount()
+		this.getBlogCount()
 	},
 	mounted() {
 		this.show = true
@@ -596,6 +636,13 @@ export default {
 						}
 					}
 				}
+			}
+		}
+		.pagination {
+			.el-pagination {
+				padding-top: 10px;
+				padding-bottom: 5px;
+				text-align: center;
 			}
 		}
 	}
