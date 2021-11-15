@@ -42,7 +42,12 @@
 						<div class="content-item" v-for="blogitem in blogList" :key="blogitem.id">
 							<el-card>
 								<div class="not">
-									<router-link :to="{}" class="not-title">{{ blogitem.title }}</router-link>
+									<router-link
+										:to="{ name: 'BlogDetail', params: { id: blogitem.id } }"
+										target="_blank"
+										class="not-title"
+										>{{ blogitem.title }}</router-link
+									>
 									<el-tag
 										v-if="blogitem.is_top"
 										effect="dark"
@@ -267,10 +272,12 @@ export default {
 			let top = document.getElementById('input-box')
 			this.current_page = val
 			this.getBlogList()
-			this.timer = setTimeout(() => {
+			setTimeout(() => {
 				//设置延迟执行
-				document.documentElement.scrollTop = top
-			}, 10)
+				top.scrollIntoView({
+					behavior: 'smooth', // 平滑过渡
+				})
+			}, 30)
 		},
 		getBlogList() {
 			ajax

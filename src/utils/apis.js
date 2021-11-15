@@ -27,6 +27,10 @@ const BlogApis = {
 	blogByTagUrl: apiHost + '/blog/tag/blog/list/',
 	// 查询博客总评论数
 	commentCountUrl: apiHost + '/blog/comment/count/',
+	// 博客详情
+	blogDetailUrl: apiHost + '/blog/blogsite/detail/',
+	// 查询博客的评论
+	blogCommentUrl: apiHost + '/blog/blogsite/comment/'
 }
 
 

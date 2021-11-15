@@ -18,7 +18,7 @@
 					size="small"
 					style="background-color:rgb(255, 255, 255)"
 				></el-avatar>
-				<router-link :to="{ name: 'Blog' }" style="text-decoration:none;color:black;"
+				<router-link :to="{ name: 'Home' }" style="text-decoration:none;color:black;"
 					><span>技术博客</span></router-link
 				>
 			</el-col>
@@ -193,7 +193,6 @@ export default {
 	font-family: 'Consolas', 'Microsoft JhengHei', 'Apple LiGothic Medium,Microsoft YaHei', '微软雅黑',
 		'Arial', sans-serif;
 	padding: 2px 0;
-	position: sticky;
 	z-index: 999;
 	top: 0;
 	box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);

@@ -138,6 +138,7 @@
 import { ajax } from '@/utils/ajax'
 import { UserApis } from '@/utils/apis'
 import { CREATED, BAD_REQUEST, NOT_FOUND, TWO_MANY_REQUESTS } from '@/utils/constants'
+import { Message } from 'element-ui'
 
 export default {
 	data() {
@@ -253,6 +254,12 @@ export default {
 							console.log(res.data.body.access)
 							window.localStorage.setItem('access', 'Bearer ' + res.data.body.access)
 							// this.$store.commit('updateUserinfo', res.data)
+							Message({
+								message: '登录成功，欢迎您',
+								type: 'success',
+								duration: 5000,
+								showClose: true,
+							})
 							this.$router.push({ name: 'Home' })
 						}
 					},

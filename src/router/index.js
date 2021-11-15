@@ -5,8 +5,8 @@ import Login from '../views/user/Login'
 import Register from '../views/user/Register'
 import Forgot from '../views/user/Forgot'
 import Project from '../views/Project'
-import Blog from '../views/Blog'
 import Message from '../views/Message'
+import BlogDetail from '../views/BlogDetail'
 import Leetcode from '../views/Leetcode'
 import Mine from '../views/user/mine'
 
@@ -44,11 +44,6 @@ const routes = [
 		component: Mine,
 	},
 	{
-		path: '/blog',
-		name: 'Blog',
-		component: Blog,
-	},
-	{
 		path: '/message',
 		name: 'Message',
 		component: Message,
@@ -57,6 +52,11 @@ const routes = [
 		path: '/leetcode',
 		name: 'Leetcode',
 		component: Leetcode,
+	},
+	{
+		path: '/blog/:id',
+		name: 'BlogDetail',
+		component: BlogDetail,
 	},
 ]
 
