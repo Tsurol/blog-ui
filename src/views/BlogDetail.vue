@@ -1,6 +1,9 @@
 <template>
 	<div class="blog-detail">
-		<Navbar id="nav" />
+		<div style="width: 100%;height: 100%;">
+			<el-backtop :bottom="60"></el-backtop>
+		</div>
+		<Navbar id="nav" class="nav" />
 		<div class="container">
 			<el-row type="flex" justify="center" :gutter="40" style="margin-left:0;margin-right:0">
 				<el-col :md="12">
@@ -17,8 +20,11 @@
 						</div>
 						<h1 class="detail-title">{{ blogDetail.title }}</h1>
 						<div class="blog-info">
-							<div class="introduce">
+							<div class="introduce" v-if="blogDetail.is_origin">
 								<img src="/static/original.png" alt="" />
+							</div>
+							<div class="introduce" v-else>
+								<img src="/static/reprint.png" alt="" />
 							</div>
 							<div style="color: #999;font-size:12.5px;" class="info">
 								<div class="top">
@@ -32,7 +38,7 @@
 								</div>
 								<div class="bot">
 									<span class="label"><i class="el-icon-folder">&nbsp;分类专栏：</i></span>
-									<el-tag size="mini">数据结构与算法</el-tag>
+									<el-tag size="mini">{{ blogDetail.category }}</el-tag>
 								</div>
 							</div>
 						</div>
@@ -46,6 +52,7 @@
 							:editable="prop.editable"
 							:scrollStyle="prop.scrollStyle"
 							:boxShadow="prop.boxShadow"
+							:navigation="prop.navigation"
 							:previewBackground="prop.previewBackground"
 							ref="md"
 						/>
@@ -56,143 +63,186 @@
 					<div class="comment-box">
 						<div class="box-head">
 							<div class="comment-title">评论区</div>
-							<span>5条评论</span>
-						</div>
-
-						<div class="comment-ls">
-							<div class="comment-item">
-								<div class="comment-header">
-									<div class="comment-user">
-										<el-avatar
-											:src="author"
-											class="comment-avatar"
-											style="box-shadow: 0px 0px 8px 2px rgb(193, 176, 224);border-radius: 5px;"
-										></el-avatar>
-										<strong class="nickname">张大炮</strong>
-									</div>
-									<div class="comment-time">3天前</div>
-								</div>
-								<div class="comment-body">
-									<div class="comment-content">
-										不能这么说，是他们的眼界让他们不能接受。现在中国做到的事是让他们世界观崩塌的事
-									</div>
-								</div>
-								<div class="comment-footer">
-									<span
-										class="iconfont icon-dianzan_huaban"
-										style="font-size:13px;margin-right:15px;"
-										>&nbsp;342
-									</span>
-									<i class="el-icon-s-promotion reply-comment">&nbsp;回复</i>
-									<!-- <i class="el-icon-s-flag reply-comment">&nbsp;举报</i> -->
-								</div>
-							</div>
-							<div class="comment-item">
-								<div class="comment-header">
-									<div class="comment-user">
-										<el-avatar
-											:src="author"
-											class="comment-avatar"
-											style="box-shadow: 0px 0px 8px 2px rgb(193, 176, 224);border-radius: 5px;"
-										></el-avatar>
-										<strong class="nickname">张大炮</strong>
-									</div>
-									<div class="comment-time">3天前</div>
-								</div>
-								<div class="comment-body">
-									<div class="comment-content">
-										不能这么说，是他们的眼界让他们不能接受。现在中国做到的事是让他们世界观崩塌的事
-									</div>
-								</div>
-								<div class="comment-footer">
-									<span
-										class="iconfont icon-dianzan_huaban"
-										style="font-size:13px;margin-right:15px;"
-										>&nbsp;342
-									</span>
-									<i class="el-icon-s-promotion reply-comment">&nbsp;回复</i>
-									<!-- <i class="el-icon-s-flag reply-comment">&nbsp;举报</i> -->
-								</div>
-							</div>
+							<span>{{ comment_count || '0' }}条评论</span>
 						</div>
 
 						<div class="commentor">
 							<el-form ref="form" :model="form" label-width="auto">
-								<el-form-item label="Your Name：">
-									<el-input v-model="form.nickname" placeholder="请留下您的名称" size="medium"></el-input>
+								<el-form-item label="Your Name：" v-show="is_login">
+									<el-input
+										v-model="form.nickname"
+										placeholder="陌生人，请留下您的名称"
+										size="medium"
+									></el-input>
 								</el-form-item>
 								<el-form-item label="Your Message：">
-									<el-input v-model="form.message" placeholder="说点什么吧..." size="medium"></el-input>
-									<span class="message"><i class="el-icon-s-promotion"></i></span>
+									<el-input
+										v-model="form.message"
+										placeholder="说点什么吧..."
+										size="medium"
+										@keydown.enter.native="postCommentList"
+									></el-input>
+									<span class="message" @click="postCommentList"
+										><i class="el-icon-s-promotion"></i
+									></span>
 								</el-form-item>
 							</el-form>
+						</div>
+
+						<div class="comment-ls" v-if="commentList.length">
+							<div
+								class="comment-item"
+								v-for="item in commentList"
+								:key="item.id"
+								:data-id="item.id"
+							>
+								<div class="comment-header">
+									<div class="comment-user">
+										<el-avatar
+											v-if="item.temporary_nickname"
+											:src="item.temporary_avatar"
+											class="comment-avatar"
+										></el-avatar>
+										<el-avatar
+											v-else
+											:src="item.user.profile.avatar"
+											class="comment-avatar"
+										></el-avatar>
+										<strong class="nickname" v-if="item.temporary_nickname">{{
+											item.temporary_nickname
+										}}</strong>
+										<strong class="nickname" v-else>{{ item.user.profile.nickname }}</strong>
+									</div>
+									<div class="comment-time">{{ item.created_at }}</div>
+								</div>
+								<div class="comment-body">
+									<div class="comment-content">
+										{{ item.content }}
+									</div>
+								</div>
+								<div class="comment-footer">
+									<span
+										@click="loveComment(item.id)"
+										class="iconfont icon-dianzan_huaban"
+										style="font-size:13px;margin-right:15px;"
+										>{{ item.love_count }}
+									</span>
+									<i
+										class="el-icon-s-promotion reply-comment"
+										@click="showReplyBox($event)"
+										:id="item.id"
+										>回复</i
+									>
+									<!-- <i class="el-icon-s-flag reply-comment">举报</i> -->
+								</div>
+								<div class="commentor">
+									<el-form ref="form1" :model="form1" label-width="auto">
+										<el-form-item v-show="is_login">
+											<el-input
+												v-model="form1.nickname"
+												placeholder="陌生人，请留下您的名称"
+												size="medium"
+											></el-input>
+										</el-form-item>
+										<el-form-item>
+											<el-input
+												v-model="form1.message"
+												placeholder="对他有话要说？"
+												size="medium"
+												@keydown.enter.native="postReplyList(item.id)"
+											></el-input>
+											<span class="message" @click="postReplyList(item.id)"
+												><i class="el-icon-s-promotion"></i
+											></span>
+										</el-form-item>
+									</el-form>
+								</div>
+
+								<div class="reply" v-for="replyitem in item.reply" :key="replyitem.id">
+									<div class="comment-header">
+										<div class="comment-user">
+											<el-avatar :src="replyitem.avatar" class="comment-avatar"></el-avatar>
+											<strong class="nickname">{{ replyitem.nickname }}</strong>
+											<!-- <span class="pp">&nbsp;@{{ item.reply.to_user }}</span
+											>： -->
+										</div>
+										<div class="comment-time">{{ replyitem.created_at }}</div>
+									</div>
+									<div class="comment-body">
+										<div class="comment-content">
+											{{ replyitem.content }}
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div
+							class="comment-ls"
+							v-else
+							style="margin-top:100px;padding-bottom:130px;color:grey;text-align:center;font-size:20px"
+						>
+							<span>来发表评论吧...</span>
 						</div>
 					</div>
 				</el-col>
 				<el-col :md="5">
 					<div class="author">
 						<div class="user-info">
-							<el-avatar :src="author" class="avatar"></el-avatar>
+							<el-avatar :src="user.avatar" class="avatar"></el-avatar>
 							<div class="desc">
-								<h3>作者昵称</h3>
-								<p>作者座右铭</p>
+								<h3>{{ user.nickname }}</h3>
+								<p>{{ user.words }}</p>
 							</div>
 						</div>
 						<div class="stats">
 							<div>
 								<span>博客</span>
-								<strong>2</strong>
+								<strong>{{ user.blog.blog_count }}</strong>
 							</div>
+							<div class="split">|</div>
 							<div>
 								<span>评论</span>
-								<strong>2</strong>
+								<strong>{{ user.blog.comment_count }}</strong>
 							</div>
 						</div>
 						<div class="menu-ls">
-							<el-button plain size="mini"><img :src="god" alt=""/></el-button>
-							<el-button plain size="mini"><img :src="bad" alt=""/></el-button>
+							<el-button plain size="mini" @click="loveBlog"><img :src="god" alt=""/></el-button>
+							<el-button plain size="mini" @click="dislove"><img :src="bad" alt=""/></el-button>
 						</div>
 					</div>
 					<div class="rel-ques">
 						<div class="title">最新评论</div>
 						<div class="new-comment">
-							<div class="new-comment-item">
-								<a href="#" target="_blank" class="blog-titile">python爬虫学习</a>
+							<div class="new-comment-item" v-for="item in NewcommentList" :key="item.id">
+								<router-link
+									:to="{ name: 'BlogDetail', params: { id: item.blog } }"
+									target="_blank"
+									class="blog-titile"
+									>{{ item.blog_title }}</router-link
+								>
 								<p class="item">
-									<span class="q">小张：</span>
-									<span class="q-commen">哥，有源码嘛？</span>
-								</p>
-							</div>
-							<div class="new-comment-item">
-								<a href="#" target="_blank" class="blog-titile">python爬虫学习</a>
-								<p class="item">
-									<span class="q">小张：</span>
-									<span class="q-commen">哥，有源码嘛？</span>
-								</p>
-							</div>
-							<div class="new-comment-item">
-								<a href="#" target="_blank" class="blog-titile">python爬虫学习</a>
-								<p class="item">
-									<span class="q">小张：</span>
-									<span class="q-commen">哥，有源码嘛？</span>
+									<span class="q" v-if="item.temporary_nickname"
+										>{{ item.temporary_nickname }}：</span
+									>
+									<span class="q" v-else>{{ item.user.profile.nickname }}：</span>
+									<span class="q-commen">{{ item.content }}</span>
 								</p>
 							</div>
 						</div>
 					</div>
 					<div class="rel-ques">
-						<div class="title">相关博客</div>
+						<div class="title">随机推送</div>
 						<div class="rel-que-ls">
-							<div>
-								<a href="#" target="_blank">疫情过后，你会报复性消费吗？&nbsp;</a
-								><span class="iconfont icon-dianzan_huaban" style="font-size:12px">30</span>
-							</div>
-							<div>
-								<a href="#" target="_blank">疫情过后你最想去哪？和谁一起？&nbsp;</a
-								><span class="iconfont icon-dianzan_huaban" style="font-size:12px">30</span>
-							</div>
-							<div>
-								<a href="#" target="_blank">如果能熬过这波疫情，你最想做的事情是什么？&nbsp;</a
-								><span class="iconfont icon-dianzan_huaban" style="font-size:12px">30</span>
+							<div v-for="item in randowBlogList" :key="item.id" class="random">
+								<router-link
+									:to="{ name: 'BlogDetail', params: { id: item.id } }"
+									target="_blank"
+									style="font-size:15px"
+									>{{ item.title }}&nbsp;</router-link
+								><span class="iconfont icon-dianzan_huaban" style="font-size:13px">{{
+									item.love_count
+								}}</span>
 							</div>
 						</div>
 					</div>
@@ -213,6 +263,7 @@
 				</el-col>
 			</el-row>
 		</div>
+		<el-backtop target=".blog-detail"></el-backtop>
 	</div>
 </template>
 
@@ -221,10 +272,20 @@ import Navbar from '@/components/home/navbar'
 import { ajax } from '@/utils/ajax'
 import { BlogApis } from '@/utils/apis'
 import { OK, CREATED } from '@/utils/constants'
+import { Host } from '@/utils/constants'
 
 export default {
 	data() {
 		return {
+			user: {
+				nickname: '',
+				avatar: '',
+				words: '',
+				blog: {
+					blog_count: '',
+					comment_count: '',
+				},
+			},
 			value: '# test markdown',
 			author: '/static/logo.png',
 			god: '/static/god.png',
@@ -236,12 +297,34 @@ export default {
 				nickname: '',
 				message: '',
 			},
+			form1: {
+				nickname: '',
+				message: '',
+			},
 			commentList: [],
+			NewcommentList: [],
+			comment_count: '',
+			is_login: true,
+			open_reply_box: false,
+			randowBlogList: [],
 		}
 	},
 	components: {
 		Navbar,
 	},
+	watch: {
+		$route(to, from) {
+			//重新获取数据
+			this.blog_id = this.$route.params.id
+			this.getTagList()
+			this.getBlogDetail()
+			this.getCommentList()
+			this.getAuthorinfo()
+			this.islogin()
+			this.getNewCommentList()
+		},
+	},
+	inject: ['reload'],
 	computed: {
 		prop() {
 			let data = {
@@ -252,21 +335,112 @@ export default {
 				scrollStyle: false,
 				boxShadow: false, //边框
 				previewBackground: '#fff',
+				navigation: false,
 			}
 			return data
 		},
 	},
 	methods: {
+		getRandomBlog() {
+			ajax.get(BlogApis.blogRandomUrl).then((res) => {
+				if (res.data.code === OK) {
+					this.randowBlogList = res.data.body.data
+				}
+			})
+		},
+		getNewCommentList() {
+			ajax
+				.get(BlogApis.blogCommentUrl, {
+					params: {
+						order: 1,
+					},
+				})
+				.then((res) => {
+					if (res.data.code === OK) {
+						this.NewcommentList = res.data.body.data
+					}
+				})
+		},
+		islogin() {
+			const access = window.localStorage.getItem('access')
+			if (access) {
+				this.is_login = false
+			} else {
+				this.is_login = true
+			}
+		},
+		loveComment(id) {
+			ajax({
+				method: 'post',
+				url: BlogApis.loveBlogUrl,
+				data: {
+					// comment_id: e.target.getAttribute('id'),
+					comment_id: id,
+				},
+			}).then((res) => {
+				if (res.data.code === CREATED) {
+					this.getCommentList()
+				}
+			})
+		},
+		showReplyBox(e) {
+			let commentorBox, commentorBoxAttr, id
+			id = e.target.getAttribute('id')
+			commentorBoxAttr = document.getElementById(id)
+			commentorBox = e.currentTarget.parentElement.nextElementSibling
+			console.log(commentorBox)
+			if (this.open_reply_box == false) {
+				commentorBox.style.display = 'block'
+				this.open_reply_box = true
+			} else if (this.open_reply_box == true) {
+				commentorBox.style.display = 'none'
+				this.open_reply_box = false
+			}
+		},
+		postReplyList(id) {
+			console.log(id)
+			ajax
+				.post(BlogApis.blogCommentUrl, {
+					temporary: this.form1.nickname,
+					blog_id: this.blog_id,
+					content: this.form1.message,
+					reply_id: id,
+				})
+				.then((res) => {
+					if (res.data.code === CREATED) {
+						this.form1.message = ''
+						this.form1.nickname = ''
+						this.reload()
+					}
+				})
+		},
+		postCommentList() {
+			ajax
+				.post(BlogApis.blogCommentUrl, {
+					temporary: this.form.nickname,
+					blog_id: this.blog_id,
+					content: this.form.message,
+				})
+				.then((res) => {
+					if (res.data.code === CREATED) {
+						this.form.message = ''
+						this.form.nickname = ''
+						this.reload()
+					}
+				})
+		},
 		getCommentList() {
 			ajax
 				.get(BlogApis.blogCommentUrl, {
 					params: {
 						blog_id: this.blog_id,
+						order: 1,
 					},
 				})
 				.then((res) => {
 					if (res.data.code === OK) {
 						this.commentList = res.data.body.data
+						this.comment_count = res.data.body.comment_count
 					}
 				})
 		},
@@ -296,11 +470,58 @@ export default {
 					}
 				})
 		},
+		getAuthorinfo() {
+			ajax
+				.get(BlogApis.blogAuthorUrl, {
+					params: {
+						blog_id: this.blog_id,
+					},
+				})
+				.then((res) => {
+					if (res.data.code === OK) {
+						this.user.nickname = res.data.body.nickname
+						this.user.avatar = res.data.body.avatar
+						this.user.words = res.data.body.words
+						this.user.blog.blog_count = res.data.body.blog.blog_count
+						this.user.blog.comment_count = res.data.body.blog.comment_count
+					}
+				})
+		},
+		loveBlog() {
+			ajax({
+				method: 'post',
+				url: BlogApis.loveBlogUrl,
+				data: {
+					blog_id: this.blog_id,
+				},
+			}).then((res) => {
+				if (res.data.code === CREATED) {
+					this.getBlogDetail()
+					this.$message({
+						showClose: true,
+						message: '作者已收到您的点赞',
+						type: 'success',
+					})
+				}
+			})
+		},
+		dislove() {
+			this.$message({
+				showClose: true,
+				message: '作者已收到您的反馈',
+				type: 'success',
+			})
+		},
 	},
 	created() {
 		this.blog_id = this.$route.params.id
 		this.getTagList()
 		this.getBlogDetail()
+		this.getCommentList()
+		this.getAuthorinfo()
+		this.islogin()
+		this.getNewCommentList()
+		this.getRandomBlog()
 	},
 }
 </script>
@@ -399,9 +620,9 @@ export default {
 				.message {
 					color: #0c0fa0;
 					cursor: pointer;
-					font-size: 17px;
+					font-size: 21px;
 					position: absolute;
-					right: 15px;
+					right: 12px;
 				}
 				.el-form-item__content {
 					position: relative;
@@ -415,13 +636,37 @@ export default {
 			.comment-ls {
 				margin-top: 40px;
 				.comment-item {
-					margin-bottom: 30px;
-					padding-bottom: 10px;
+					// margin-bottom: 30px;
+					margin-top: 10px;
+					padding-bottom: 5px;
 					border-bottom: 1px solid #dbdbdb;
+					.commentor {
+						display: none;
+						margin-top: 10px;
+						.message {
+							color: #0c0fa0;
+							cursor: pointer;
+							font-size: 21px;
+							position: absolute;
+							right: 12px;
+						}
+						.el-form-item {
+							margin-bottom: 10px;
+						}
+						.el-form-item__label {
+							font-weight: bold;
+							padding: 0;
+							font-size: 14px;
+						}
+					}
 					.comment-header {
 						display: flex;
 						align-items: center;
 						justify-content: space-between;
+						.comment-time {
+							font-size: 13.5px;
+							color: #7f8081;
+						}
 						.comment-user {
 							display: flex;
 							align-items: center;
@@ -430,7 +675,7 @@ export default {
 								height: 25px;
 							}
 							.nickname {
-								margin-left: 10px;
+								margin-left: 5px;
 							}
 						}
 					}
@@ -440,19 +685,60 @@ export default {
 						.comment-content {
 							margin-left: 35px;
 							font-size: 15px;
-							margin-top: 8px;
+							margin-top: 5px;
 						}
 					}
 					.comment-footer {
 						display: flex;
 						align-items: center;
 						margin-left: 35px;
-						margin-top: 10px;
+						margin-top: 5px;
 						cursor: pointer;
 						color: #838080;
 						font-size: 13px;
 						i {
 							margin-right: 20px;
+						}
+						i:hover {
+							color: #1a65c0;
+						}
+						span:hover {
+							color: #1a65c0;
+						}
+					}
+					.reply {
+						padding-left: 30px;
+						margin-top: 10px;
+						// padding-bottom: 5px;
+						// border-bottom: 1px solid #dbdbdb;
+						.comment-header {
+							display: flex;
+							align-items: center;
+							justify-content: space-between;
+							.comment-user {
+								font-size: 14px;
+								display: flex;
+								align-items: center;
+								.comment-avatar {
+									width: 25px;
+									height: 25px;
+								}
+								.nickname {
+									margin-left: 5px;
+								}
+								.pp {
+									color: blue;
+								}
+							}
+						}
+						.comment-body {
+							display: flex;
+							align-items: center;
+							.comment-content {
+								margin-left: 35px;
+								font-size: 15px;
+								margin-top: 5px;
+							}
 						}
 					}
 				}
@@ -467,7 +753,7 @@ export default {
 				display: flex;
 				flex-direction: row;
 				.avatar {
-					box-shadow: 0px 0px 8px 2px rgb(193, 176, 224);
+					box-shadow: 0px 0px 0px 2px rgb(213, 213, 216);
 				}
 				.el-avatar--circle {
 					border-radius: 5px;
@@ -484,10 +770,12 @@ export default {
 						overflow: hidden;
 						margin: 0;
 						font-size: 13px;
+						margin-top: 2px;
 					}
 				}
 			}
 			.stats {
+				justify-content: center;
 				display: flex;
 				margin-top: 10px;
 				div {
@@ -496,6 +784,10 @@ export default {
 					flex-direction: column;
 					text-align: center;
 				}
+				.split {
+					font-size: 20px;
+					line-height: 40px;
+				}
 			}
 			.menu-ls {
 				display: flex;
@@ -503,8 +795,16 @@ export default {
 				button {
 					flex: 1;
 					padding: 0;
-					img {
-						width: 27px;
+					span {
+						display: flex;
+						justify-content: center;
+						align-items: flex-end;
+						img {
+							width: 27px;
+						}
+						span {
+							font-size: 15px;
+						}
 					}
 				}
 			}
@@ -516,19 +816,26 @@ export default {
 		}
 		.rel-ques .title {
 			font-weight: bold;
-			font-size: 18px;
+			font-size: 21px;
 			margin-bottom: 5px;
 		}
 		.rel-ques .rel-que-ls > div {
 			font-size: 12.5px;
-			padding: 5px 0;
+			padding-top: 15px;
+			padding-bottom: 0;
 		}
 		.rel-ques .rel-que-ls a {
-			color: #175199;
+			color: #4c2b88;
 			text-decoration: none;
 		}
 		.rel-ques .rel-que-ls span {
 			color: #8590a6;
+		}
+		.random {
+			border-bottom: 1px solid #dddcdc;
+		}
+		.random:hover {
+			background-color: #f9feff;
 		}
 		.new-comment-item {
 			margin-bottom: 10px;
@@ -540,6 +847,9 @@ export default {
 				font-size: 14px;
 				color: #999aaa;
 				display: block;
+			}
+			.blog-titile:hover {
+				color: rgb(119, 189, 168);
 			}
 			.item {
 				margin: 0;

@@ -9,6 +9,7 @@ import Message from '../views/Message'
 import BlogDetail from '../views/BlogDetail'
 import Leetcode from '../views/Leetcode'
 import Mine from '../views/user/mine'
+import Contribution from '../views/Contribution'
 
 Vue.use(VueRouter)
 
@@ -57,6 +58,11 @@ const routes = [
 		path: '/blog/:id',
 		name: 'BlogDetail',
 		component: BlogDetail,
+	},
+	{
+		path: '/Contribution',
+		name: 'Contribution',
+		component: Contribution,
 	},
 ]
 

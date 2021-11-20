@@ -1,5 +1,8 @@
 <template>
-	<div class="home-search-box">
+	<div class="home-search-box" id="home-search-box" href="#home-search-box">
+		<div style="width: 100%;height: 100%;">
+			<el-backtop :bottom="60"></el-backtop>
+		</div>
 		<el-row type="flex" justify="center" :gutter="35" style="margin-left:0;margin-right:0">
 			<el-col :md="5" class="left">
 				<div class="content-notice">
@@ -23,7 +26,9 @@
 						</div>
 						<div v-for="(hotitem, index) in hotList" :key="hotitem.id" class="item">
 							<span class="rank" :style="{ backgroundColor: hotitem.bkc }">{{ index + 1 }}</span>
-							<span class="rank-title">{{ hotitem.title }}</span>
+							<router-link :to="{ name: 'BlogDetail', params: { id: hotitem.id } }" class="enter">
+								<span class="rank-title">{{ hotitem.title }}</span>
+							</router-link>
 						</div>
 					</el-card>
 				</div>
@@ -58,7 +63,7 @@
 								<div class="blogpart" v-if="blogitem.img">
 									<div class="blog-left">
 										<el-image
-											style="width: 130px; height: 100px;border-radius:5px"
+											style="width: 160px; height: 100px;border-radius:5px;"
 											:src="blogitem.img"
 											fit="fill"
 										>
@@ -207,13 +212,13 @@ export default {
 			activities: [
 				{
 					content: '开始内测',
-					timestamp: '2021-10-25',
+					timestamp: '2021-11-15',
 					color: '#5073e9',
 					placement: 'top',
 				},
 				{
-					content: '开放"每日壹题"板块',
-					timestamp: '2021-10-30',
+					content: '同步博客',
+					timestamp: '2021-11-22',
 					color: '#5073e9',
 					placement: 'top',
 				},
@@ -269,7 +274,7 @@ export default {
 			})
 		},
 		handleCurrentChange(val) {
-			let top = document.getElementById('input-box')
+			let top = document.getElementById('home-search-box')
 			this.current_page = val
 			this.getBlogList()
 			setTimeout(() => {
@@ -359,6 +364,11 @@ export default {
 				)
 		},
 		searchByTag(e) {
+			console.log('回顶部')
+			const dom = document.querySelector('#input-box')
+			if (dom) {
+				dom.scrollIntoView(true)
+			}
 			ajax({
 				method: 'post',
 				url: BlogApis.blogByTagUrl,
@@ -368,7 +378,6 @@ export default {
 			}).then((res) => {
 				if (res.data.code === CREATED) {
 					this.blogList = res.data.body.data
-					console.log(this.blogList)
 				}
 			})
 		},
@@ -468,6 +477,10 @@ export default {
 			padding: 15px 10px;
 			display: flex;
 			align-items: center;
+			.enter {
+				color: #440547;
+				text-decoration: none;
+			}
 			.rank {
 				text-align: center;
 				background-color: #e04a1d;
@@ -622,9 +635,14 @@ export default {
 					flex-flow: row nowrap;
 					margin-top: 5px;
 					.blog-left {
+						img:hover {
+							transform: scale(1.07, 1.07);
+						}
 					}
 					.blog-right {
 						padding: 0 15px;
+						font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
+							Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 					}
 					.image-slot {
 						background-color: #f5f7fa;

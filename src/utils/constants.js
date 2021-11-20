@@ -9,3 +9,4 @@ export const FORBIDDEN = 403;
 export const NOT_FOUND = 404;
 export const TWO_MANY_REQUESTS = 429;
 export const INTERNAL_SERVER_ERROR = 500;
+export const Host = 'http://localhost:8080/'

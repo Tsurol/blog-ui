@@ -13,7 +13,7 @@ const UserApis = {
 	sendCodeUrl: apiHost + '/auth/email/code/',
 	// 用户个人信息接口
 	userInfoUrl: apiHost + '/auth/user/info/',
-};
+}
 
 /**博客模块 */
 const BlogApis = {
@@ -21,7 +21,7 @@ const BlogApis = {
 	blogListUrl: apiHost + '/blog/blogsite/list/',
 	// 标签列表接口
 	tagListUrl: apiHost + '/blog/tag/list/',
-	// 点赞博客接口
+	// 点赞博客(评论)接口
 	loveBlogUrl: apiHost + '/blog/blogsite/love/',
 	// 通过标签查询博客接口
 	blogByTagUrl: apiHost + '/blog/tag/blog/list/',
@@ -29,9 +29,16 @@ const BlogApis = {
 	commentCountUrl: apiHost + '/blog/comment/count/',
 	// 博客详情
 	blogDetailUrl: apiHost + '/blog/blogsite/detail/',
-	// 查询博客的评论
-	blogCommentUrl: apiHost + '/blog/blogsite/comment/'
+	// 查询（发送）博客的评论(回复)
+	blogCommentUrl: apiHost + '/blog/blogsite/comment/',
+	// 查询博客的作者信息
+	blogAuthorUrl: apiHost + '/blog/author/info/',
+	// 随机推送
+	blogRandomUrl: apiHost + '/blog/random/blog/',
+	// 用户反馈
+	UserAdviceUrl: apiHost + '/blog/advice/',
+	// 创建博客
+	CreateBlogUrl: apiHost + '/blog/create/blog/'
 }
 
-
-export { UserApis, BlogApis };
+export { UserApis, BlogApis }

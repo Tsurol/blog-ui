@@ -8,9 +8,10 @@
 					style="background-color:rgb(255, 255, 255)"
 				></el-avatar>
 
-				<router-link :to="{ name: 'Home' }" style="text-decoration:none;color:black;"
+				<!-- <router-link :to="{ name: 'Home' }" style="text-decoration:none;color:black;"
 					><span class="logo">周梓凌的个人网站</span></router-link
-				>
+				> -->
+				<span class="logo" @click="reloadHome">周梓凌的个人网站</span>
 			</el-col>
 			<el-col :span="3" class="item">
 				<el-avatar
@@ -78,20 +79,25 @@
 						</el-dropdown-item>
 
 						<el-dialog title="意见反馈" :append-to-body="true" :visible.sync="dialogFormVisible">
-							<el-form :model="form">
-								<el-form-item label="您的姓名" :label-width="formLabelWidth">
+							<el-form :model="form" :rules="adviceRules" status-icon>
+								<el-form-item label="您的姓名" :label-width="formLabelWidth" prop="name">
 									<el-input v-model="form.name" autocomplete="off"></el-input>
 								</el-form-item>
-								<el-form-item label="联系方式" :label-width="formLabelWidth">
+								<el-form-item label="联系方式" :label-width="formLabelWidth" prop="phone">
 									<el-input v-model="form.phone" autocomplete="off"></el-input>
 								</el-form-item>
-								<el-form-item label="您的意见" :label-width="formLabelWidth">
-									<el-input type="textarea" v-model="form.content" autocomplete="off" :rows="5"></el-input>
+								<el-form-item label="您的意见" :label-width="formLabelWidth" prop="content">
+									<el-input
+										type="textarea"
+										v-model="form.content"
+										autocomplete="off"
+										:rows="5"
+									></el-input>
 								</el-form-item>
 							</el-form>
 							<div slot="footer" class="dialog-footer">
 								<el-button @click="dialogFormVisible = false">取 消</el-button>
-								<el-button type="primary" @click="dialogFormVisible = false">提 交</el-button>
+								<el-button type="primary" @click="AdviceSubmit">提 交</el-button>
 							</div>
 						</el-dialog>
 						<el-dropdown-item
@@ -104,7 +110,8 @@
 				<router-link :to="{ name: 'Mine' }" style="text-decoration:none;color:black;">
 					<span>{{ user.nickname }}</span>
 				</router-link>
-				<span class="upload">投稿</span>
+				<!-- <span class="upload">投稿</span> -->
+				<el-button type="danger" @click="Contribution">投稿</el-button>
 			</el-col>
 
 			<el-col :span="4" class="item" v-else>
@@ -112,7 +119,8 @@
 				<router-link :to="{ name: 'Login' }" style="text-decoration:none;color:black;">
 					<span>登录/注册&nbsp;</span>
 				</router-link>
-				<span class="upload">投稿</span>
+				<!-- <span class="upload">投稿</span> -->
+				<el-button type="danger" @click="Contribution">投稿</el-button>
 			</el-col>
 		</el-row>
 	</div>
@@ -123,6 +131,7 @@ import { ajax } from '@/utils/ajax'
 import { UserApis } from '@/utils/apis'
 import { OK, CREATED } from '@/utils/constants'
 import { Message } from 'element-ui'
+import { BlogApis } from '@/utils/apis'
 
 export default {
 	inject: ['reload'],
@@ -134,7 +143,33 @@ export default {
 		},
 	},
 	data() {
+		var validatePhone = (rule, value, callback) => {
+			const reg = /^[1][3,4,5,7,8][0-9]{9}$/
+			if (this.form.phone == '' || this.form.phone == undefined || this.form.phone == null) {
+				callback()
+			} else {
+				if (!reg.test(this.form.phone) && this.form.phone != '') {
+					callback(new Error('请输入正确的电话号码'))
+				} else {
+					callback()
+				}
+			}
+		}
 		return {
+			adviceRules: {
+				name: [
+					{ required: true, message: '姓名不能为空', trigger: 'blur' },
+					{ min: 2, max: 8, message: '长度应在 2~8 个字符', trigger: 'blur' },
+				],
+				phone: [
+					{ validator: validatePhone, trigger: 'blur' },
+					{ required: true, message: '内容不能为空', trigger: 'blur' },
+				],
+				content: [
+					{ required: true, message: '内容不能为空', trigger: 'blur' },
+					{ min: 5, message: '长度应在5个字符以上', trigger: 'blur' },
+				],
+			},
 			formLabelWidth: '100px',
 			dialogFormVisible: false,
 			centerDialogVisible: false,
@@ -157,6 +192,46 @@ export default {
 		}
 	},
 	methods: {
+		reloadHome() {
+			this.reload()
+			this.$router.push({name:'Home'})
+		},
+		Contribution() {
+			if (window.localStorage.getItem('access')) {
+				this.$router.push({ name: 'Contribution' })
+			} else {
+				Message({
+					message: '请登录后再操作',
+					type: 'error',
+					duration: 3000,
+					showClose: true,
+				})
+			}
+		},
+		AdviceSubmit() {
+			this.dialogFormVisible = false
+			ajax({
+				method: 'post',
+				url: BlogApis.UserAdviceUrl,
+				data: {
+					name: this.form.name,
+					mobile: this.form.phone,
+					advice: this.form.content,
+				},
+			}).then((res) => {
+				if (res.data.code === CREATED) {
+					this.form.name = ''
+					this.form.phone = ''
+					this.form.content = ''
+					Message({
+						message: '作者已收到您的意见反馈',
+						type: 'success',
+						duration: 5000,
+						showClose: true,
+					})
+				}
+			})
+		},
 		logout() {
 			if (window.localStorage.getItem('access')) {
 				window.localStorage.removeItem('access')
@@ -193,8 +268,9 @@ export default {
 	font-family: 'Consolas', 'Microsoft JhengHei', 'Apple LiGothic Medium,Microsoft YaHei', '微软雅黑',
 		'Arial', sans-serif;
 	padding: 2px 0;
-	z-index: 999;
+	z-index: 999999;
 	top: 0;
+	position:sticky;
 	box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
 	text-align: center;
 	background-color: #fff;
@@ -215,17 +291,15 @@ export default {
 		.avatar:hover {
 			transform: scale(1.1, 1.1);
 		}
-		.upload {
+		.el-button--danger {
 			background-color: #fb7299;
-			text-align: center;
-			padding: 0 10px;
-			color: #fff;
-			margin-left: 20px;
-			font-size: 15px;
-			line-height: 32px;
-			font-weight: 500;
-			border-radius: 2px;
-			text-align: center;
+			margin-left: 15px;
+		}
+		.el-button--danger span:hover {
+			color: rgb(94, 2, 2);
+		}
+		.el-button {
+			padding: 10px 12px;
 		}
 		.logo {
 			font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell,

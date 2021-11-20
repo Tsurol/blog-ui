@@ -4,7 +4,11 @@
 	</div>
 </template>
 
-<style lang="less"></style>
+<style lang="less">
+#app {
+	width: 1519px;
+}
+</style>
 
 <script>
 export default {

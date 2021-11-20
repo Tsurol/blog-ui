@@ -1,6 +1,10 @@
 import axios from 'axios'
 import Router from '@/router/index'
 import { Message } from 'element-ui'
+import { Loading } from 'element-ui'
+import { MessageBox } from 'element-ui'
+
+let loadingInstance = null
 
 // 创建axios实例
 export const ajax = axios.create({
@@ -8,7 +12,8 @@ export const ajax = axios.create({
 	headers: {
 		'Content-Type': 'application/json',
 	},
-	timeout: 5000,
+	timeout: 25000,
+	traditional:true,
 	// 默认携带上次的cookie
 	withCredentials: true,
 })
@@ -17,6 +22,11 @@ export const ajax = axios.create({
 ajax.interceptors.request.use(
 	function(config) {
 		// 在发送请求前做些什么
+		loadingInstance = Loading.service({
+			 lock: true,
+			 text: '请稍后',
+			 background: 'rgba(0, 0, 0, 0)'
+			})
 		console.log('请求拦截到了')
 		const access = window.localStorage.getItem('access')
 		if (access) {
@@ -33,15 +43,16 @@ ajax.interceptors.request.use(
 ajax.interceptors.response.use(
 	function(response) {
 		// 对响应数据做些什么
+		loadingInstance.close()
 		// console.log(response.data)
 		console.log('响应拦截到了')
-		// window.app.$toast.clear()
 		return response
 	},
 	function(error) {
 		if (error.response) {
 			// 对错误响应做点什么
 			// 统一的错误处理
+			loadingInstance.close()
 			if (error.response.status === 400) {
 				Message({
 					message: error.response.data.message,
@@ -64,16 +75,15 @@ ajax.interceptors.response.use(
 					showClose: true,
 				})
 				// Router.push({ name: 'Login' })
-			} else if (error.response.status === 404) {
-				Message({
-					message: error.response.data.message,
-					type: 'error',
-					duration: 5000,
-					showClose: true,
-				})
+				// } else if (error.response.status === 404) {
+				// 	Message({
+				// 		message: error.response.data.message,
+				// 		type: 'error',
+				// 		duration: 5000,
+				// 		showClose: true,
+				// 	})
 			}
 		}
-		// window.app.$toast.clear()
 		return Promise.reject(error)
 	}
 )
