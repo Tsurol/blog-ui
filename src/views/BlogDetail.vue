@@ -6,7 +6,7 @@
 		<Navbar id="nav" class="nav" />
 		<div class="container">
 			<el-row type="flex" justify="center" :gutter="40" style="margin-left:0;margin-right:0">
-				<el-col :md="12">
+				<el-col :span="12" :xs="24" :sm="16" :lg="12">
 					<div class="header">
 						<div class="tags">
 							<span
@@ -67,11 +67,11 @@
 						</div>
 
 						<div class="commentor">
-							<el-form ref="form" :model="form" label-width="auto">
-								<el-form-item label="Your Name：" v-show="is_login">
+							<el-form ref="form" :model="form" label-width="109px">
+								<el-form-item label="Your Name：">
 									<el-input
 										v-model="form.nickname"
-										placeholder="陌生人，请留下您的名称"
+										placeholder="请留下您的名称"
 										size="medium"
 									></el-input>
 								</el-form-item>
@@ -136,15 +136,15 @@
 									<!-- <i class="el-icon-s-flag reply-comment">举报</i> -->
 								</div>
 								<div class="commentor">
-									<el-form ref="form1" :model="form1" label-width="auto">
-										<el-form-item v-show="is_login">
+									<el-form ref="form1" :model="form1" label-width="109px">
+										<el-form-item label="Your Name：">
 											<el-input
 												v-model="form1.nickname"
-												placeholder="陌生人，请留下您的名称"
+												placeholder="请留下您的名称"
 												size="medium"
 											></el-input>
 										</el-form-item>
-										<el-form-item>
+										<el-form-item label="Your Message：">
 											<el-input
 												v-model="form1.message"
 												placeholder="对他有话要说？"
@@ -186,7 +186,7 @@
 						</div>
 					</div>
 				</el-col>
-				<el-col :md="5">
+				<el-col :span="5" :xs="0" :sm="8" :lg="5">
 					<div class="author">
 						<div class="user-info">
 							<el-avatar :src="user.avatar" class="avatar"></el-avatar>
@@ -398,7 +398,21 @@ export default {
 			}
 		},
 		postReplyList(id) {
-			console.log(id)
+			// if (window.localStorage.getItem('access')) {
+			// 	ajax
+			// 		.post(BlogApis.blogCommentUrl, {
+			// 			blog_id: this.blog_id,
+			// 			content: this.form1.message,
+			// 			reply_id: id,
+			// 		})
+			// 		.then((res) => {
+			// 			if (res.data.code === CREATED) {
+			// 				this.form1.message = ''
+			// 				this.form1.nickname = ''
+			// 				this.reload()
+			// 			}
+			// 		})
+			// } else {
 			ajax
 				.post(BlogApis.blogCommentUrl, {
 					temporary: this.form1.nickname,
@@ -413,6 +427,7 @@ export default {
 						this.reload()
 					}
 				})
+			// }
 		},
 		postCommentList() {
 			ajax
@@ -434,7 +449,6 @@ export default {
 				.get(BlogApis.blogCommentUrl, {
 					params: {
 						blog_id: this.blog_id,
-						order: 1,
 					},
 				})
 				.then((res) => {
@@ -528,6 +542,7 @@ export default {
 
 <style lang="less">
 .blog-detail {
+	padding-top: 40px;
 	font-family: 'Consolas', 'Microsoft JhengHei', 'Apple LiGothic Medium,Microsoft YaHei', '微软雅黑',
 		'Arial', sans-serif;
 	background-color: #f5f5f5;
@@ -872,6 +887,46 @@ export default {
 		.right-footer a,
 		.right-footer a:hover {
 			text-decoration: none;
+		}
+	}
+}
+@media screen and (max-width: 767px) {
+	.blog-detail {
+		.container {
+			.el-row {
+				.header {
+					.tags {
+						.tag-item {
+							font-size: 13px;
+						}
+					}
+					.detail-title {
+						font-size: 21px;
+					}
+					.blog-info {
+						.info {
+							.top {
+								.view-count {
+									display: none;
+								}
+							}
+						}
+					}
+				}
+				.sep {
+					display: none;
+				}
+				.comment-box {
+					.box-head {
+						.comment-title {
+							font-size: 24px;
+						}
+						span {
+							font-size: 13px;
+						}
+					}
+				}
+			}
 		}
 	}
 }

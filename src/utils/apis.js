@@ -1,5 +1,5 @@
-const apiHost = 'http://localhost:8080/api'
-// const apiHost = '/api'
+// const apiHost = 'http://localhost:8080/api'
+const apiHost = '/api'
 
 /**用户模块 */
 const UserApis = {
@@ -13,6 +13,8 @@ const UserApis = {
 	sendCodeUrl: apiHost + '/auth/email/code/',
 	// 用户个人信息接口
 	userInfoUrl: apiHost + '/auth/user/info/',
+	// 忘记密码接口
+	resetPwdUrl: apiHost + '/auth/email/reset/'
 }
 
 /**博客模块 */

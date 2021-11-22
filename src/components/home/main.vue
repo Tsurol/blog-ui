@@ -3,8 +3,8 @@
 		<div style="width: 100%;height: 100%;">
 			<el-backtop :bottom="60"></el-backtop>
 		</div>
-		<el-row type="flex" justify="center" :gutter="35" style="margin-left:0;margin-right:0">
-			<el-col :md="5" class="left">
+		<el-row type="flex" justify="center" :gutter="35">
+			<el-col :md="6" :xs="0" :sm="1" :lg="5" :xl="5" class="left">
 				<div class="content-notice">
 					<el-card>
 						<div
@@ -33,7 +33,7 @@
 					</el-card>
 				</div>
 			</el-col>
-			<el-col :md="11" class="main">
+			<el-col :md="12" :xs="24" :sm="16" :lg="11" :xl="12" class="main">
 				<div class="input-suffix" id="input-box">
 					<el-input
 						v-model="search"
@@ -62,14 +62,9 @@
 								</div>
 								<div class="blogpart" v-if="blogitem.img">
 									<div class="blog-left">
-										<el-image
-											style="width: 160px; height: 100px;border-radius:5px;"
-											:src="blogitem.img"
-											fit="fill"
-										>
-										</el-image>
+										<el-image :src="blogitem.img" fit="fill"> </el-image>
 									</div>
-									<div class="not-content blog-right" style="line-height:25px;font-size: 15px;">
+									<div class="not-content blog-right">
 										{{ blogitem.desc }}
 									</div>
 								</div>
@@ -105,7 +100,7 @@
 					></el-pagination>
 				</div>
 			</el-col>
-			<el-col :md="5" class="right">
+			<el-col :md="6" :xs="0" :sm="8" :lg="5" :xl="5" class="right">
 				<div class="author">
 					<el-avatar :src="author" class="avatar"></el-avatar>
 					<div
@@ -260,7 +255,8 @@ export default {
 			nowSecond: '',
 			nowWeek: '',
 			current_page: 1,
-			limit: 5,
+			limit: 8,
+			screenWidth: document.body.clientWidth,
 		}
 	},
 	inject: ['reload'],
@@ -364,7 +360,6 @@ export default {
 				)
 		},
 		searchByTag(e) {
-			console.log('回顶部')
 			const dom = document.querySelector('#input-box')
 			if (dom) {
 				dom.scrollIntoView(true)
@@ -435,6 +430,22 @@ export default {
 			this.Times = setInterval(this.nowTimes, 1000)
 		},
 	},
+	watch: {
+		screenWidth(val) {
+			// 为了避免频繁触发resize函数导致页面卡顿，使用定时器
+			if (!this.timer) {
+				// 一旦监听到的screenWidth值改变，就将其重新赋给data里的screenWidth
+				this.screenWidth = val
+				this.timer = true
+				let that = this
+				setTimeout(function() {
+					// 打印screenWidth变化的值
+					console.log(that.screenWidth)
+					that.timer = false
+				}, 400)
+			}
+		},
+	},
 	created() {
 		this.nowTimes()
 		this.getHotList()
@@ -445,16 +456,25 @@ export default {
 	},
 	mounted() {
 		this.show = true
+		const that = this
+		window.onresize = () => {
+			return (() => {
+				window.screenWidth = document.body.clientWidth
+				that.screenWidth = window.screenWidth
+			})()
+		}
 	},
 }
 </script>
 
 <style lang="less">
 .home-search-box {
+	overflow-x: hidden;
+	padding: 0 18px;
+	box-sizing: border-box;
 	font-family: 'Consolas', 'Microsoft JhengHei', 'Apple LiGothic Medium,Microsoft YaHei', '微软雅黑',
 		'Arial', sans-serif;
-	// padding: 40px 0;
-	padding-top: 20px;
+	padding-top: 55px;
 
 	.left {
 		.content-notice {
@@ -635,11 +655,18 @@ export default {
 					flex-flow: row nowrap;
 					margin-top: 5px;
 					.blog-left {
+						.el-image {
+							width: 160px;
+							height: 100px;
+							border-radius: 5px;
+						}
 						img:hover {
 							transform: scale(1.07, 1.07);
 						}
 					}
 					.blog-right {
+						line-height: 25px;
+						font-size: 15px;
 						padding: 0 15px;
 						font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
 							Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
@@ -693,6 +720,47 @@ export default {
 	}
 	.el-card__body {
 		padding: 12px;
+	}
+}
+@media screen and (max-width: 767px) {
+	.home-search-box {
+		.el-row {
+			.left {
+				display: none;
+			}
+			.right {
+				display: none;
+			}
+			.main {
+				.content {
+					.content-item {
+						.not {
+							.not-title {
+								font-size: 21px;
+							}
+						}
+						.blogpart {
+							display: block;
+							text-align: left;
+							.blog-left {
+								.el-image {
+									//width: 313.2px;
+									width: 100%;
+									height: auto;
+								}
+							}
+							.blog-right {
+								font-size: 13px;
+								line-height: 25px;
+								padding: 0;
+								padding-right: 10px;
+								text-align: left;
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 }
 </style>

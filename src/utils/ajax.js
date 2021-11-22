@@ -25,7 +25,7 @@ ajax.interceptors.request.use(
 		loadingInstance = Loading.service({
 			 lock: true,
 			 text: '请稍后',
-			 background: 'rgba(0, 0, 0, 0)'
+			//  background: '#fff'
 			})
 		console.log('请求拦截到了')
 		const access = window.localStorage.getItem('access')

@@ -20,7 +20,7 @@
 						<el-form-item label="用户名" size="small" prop="username">
 							<el-input
 								v-model="formRegister.username"
-								placeholder="请输入用户名"
+								placeholder="请输入用户名（3~10位英文）"
 								clearable
 								class="input"
 								autocomplete="off"
@@ -111,6 +111,19 @@ export default {
 				}
 			}, 100)
 		}
+		var checkUname = (rule, value, callback) => {
+			const mailReg = /^[a-zA-Z]{3,10}$/
+			if (!value) {
+				return callback(new Error('用户名不能为空'))
+			}
+			setTimeout(() => {
+				if (mailReg.test(value)) {
+					callback()
+				} else {
+					callback(new Error('请输入正确的用户名格式(3~10位英文)'))
+				}
+			}, 100)
+		}
 		return {
 			isCodeSend: false,
 			sendBtnText: '发送验证码',
@@ -125,8 +138,9 @@ export default {
 			},
 			rulesRegister: {
 				username: [
+					{ validator: checkUname, trigger: 'blur' },
 					{ required: true, message: '用户名不能为空', trigger: 'blur' },
-					{ min: 1, max: 20, message: '用户名长度在1~20个字符', trigger: 'blur' },
+					{ min: 3, max: 10, message: '用户名长度在3~10个字符', trigger: 'blur' },
 				],
 				email: [
 					{ validator: checkEmail, trigger: 'blur' },
@@ -202,8 +216,8 @@ export default {
 			ajax
 				.post(UserApis.userRegisterUrl, {
 					username: this.formRegister.username,
-          email: this.formRegister.email,
-          verify_code: this.formRegister.code,
+					email: this.formRegister.email,
+					verify_code: this.formRegister.code,
 					password: this.formRegister.pwd,
 				})
 				.then(
@@ -211,15 +225,15 @@ export default {
 						if (res.data.code === CREATED) {
 							console.log(res.data.body.access)
 							window.localStorage.setItem('access', 'Bearer ' + res.data.body.access)
-              this.$message.success('注册成功，已为您自动登录')
+							this.$message.success('注册成功，已为您自动登录')
 							// this.$store.commit('updateUserinfo', res.data)
 							this.$router.push({ name: 'Home' })
 						}
 					},
 					(error) => {
 						this.formRegister.username = ''
-            this.formRegister.email = ''
-            this.formRegister.code = ''
+						this.formRegister.email = ''
+						this.formRegister.code = ''
 						this.formRegister.pwd = ''
 					}
 				)
@@ -241,6 +255,9 @@ export default {
 <style lang="less">
 .page-register {
 	text-align: center;
+	.el-col {
+		overflow-y: hidden;
+	}
 	.login-form {
 		margin-top: 40px;
 		background-color: rgb(246, 248, 250);

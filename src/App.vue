@@ -6,7 +6,6 @@
 
 <style lang="less">
 #app {
-	width: 1519px;
 }
 </style>
 

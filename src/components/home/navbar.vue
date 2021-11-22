@@ -1,7 +1,7 @@
 <template>
 	<div class="home-navbar-box">
-		<el-row type="flex" justify="center" :gutter="35" style="margin-left:0;margin-right:0;">
-			<el-col :span="5" class="item">
+		<el-row type="flex" justify="center">
+			<el-col :span="5" :md="5" :xs="12" :sm="7" class="item show">
 				<el-avatar
 					src="/static/logo1.png"
 					size="small"
@@ -13,7 +13,7 @@
 				> -->
 				<span class="logo" @click="reloadHome">周梓凌的个人网站</span>
 			</el-col>
-			<el-col :span="3" class="item">
+			<el-col :span="3" :md="3" :xs="0" :sm="0" class="item not-show hidden-sm-only">
 				<el-avatar
 					src="/static/apng.png"
 					size="small"
@@ -23,7 +23,7 @@
 					><span>技术博客</span></router-link
 				>
 			</el-col>
-			<el-col :span="3" class="item">
+			<el-col :span="3" :md="3" :xs="0" :sm="0" class="item not-show hidden-sm-only">
 				<el-avatar
 					src="/static/githubb.png"
 					size="small"
@@ -33,7 +33,7 @@
 					><span>个人项目</span></router-link
 				>
 			</el-col>
-			<el-col :span="3" class="item">
+			<el-col :span="3" :md="3" :xs="0" :sm="4" class="item not-show">
 				<el-avatar
 					src="/static/l.png"
 					size="small"
@@ -43,7 +43,7 @@
 					><span>留言板块</span></router-link
 				>
 			</el-col>
-			<el-col :span="3" class="item">
+			<el-col :span="3" :md="3" :xs="0" :sm="4" class="item not-show">
 				<el-avatar
 					src="/static/z.png"
 					size="small"
@@ -54,7 +54,7 @@
 				</router-link>
 			</el-col>
 
-			<el-col :span="4" class="item" v-if="access">
+			<el-col :span="4" :md="4" :xs="8" :sm="7" class="item show" v-if="access">
 				<el-dropdown :show-timeout="10" :hide-timeout="50" placement="bottom">
 					<el-avatar
 						class="avatar"
@@ -111,16 +111,16 @@
 					<span>{{ user.nickname }}</span>
 				</router-link>
 				<!-- <span class="upload">投稿</span> -->
-				<el-button type="danger" @click="Contribution">投稿</el-button>
+				<el-button type="danger" @click="Contribution" class="not-show-btn">投稿</el-button>
 			</el-col>
 
-			<el-col :span="4" class="item" v-else>
+			<el-col :span="4" :md="4" :xs="8" :sm="7" class="item show" v-else>
 				<el-avatar :src="p" size="small" style="background-color:rgb(255, 255, 255)"> </el-avatar>
 				<router-link :to="{ name: 'Login' }" style="text-decoration:none;color:black;">
 					<span>登录/注册&nbsp;</span>
 				</router-link>
 				<!-- <span class="upload">投稿</span> -->
-				<el-button type="danger" @click="Contribution">投稿</el-button>
+				<el-button type="danger" @click="Contribution" class="not-show-btn">投稿</el-button>
 			</el-col>
 		</el-row>
 	</div>
@@ -194,7 +194,7 @@ export default {
 	methods: {
 		reloadHome() {
 			this.reload()
-			this.$router.push({name:'Home'})
+			this.$router.push({ name: 'Home' })
 		},
 		Contribution() {
 			if (window.localStorage.getItem('access')) {
@@ -268,9 +268,10 @@ export default {
 	font-family: 'Consolas', 'Microsoft JhengHei', 'Apple LiGothic Medium,Microsoft YaHei', '微软雅黑',
 		'Arial', sans-serif;
 	padding: 2px 0;
-	z-index: 999999;
+	z-index: 1600;
 	top: 0;
-	position:sticky;
+	position: fixed;
+	width: 100%;
 	box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
 	text-align: center;
 	background-color: #fff;
@@ -293,7 +294,7 @@ export default {
 		}
 		.el-button--danger {
 			background-color: #fb7299;
-			margin-left: 15px;
+			margin-left: 30px;
 		}
 		.el-button--danger span:hover {
 			color: rgb(94, 2, 2);
@@ -329,5 +330,28 @@ export default {
 }
 .el-dialog {
 	width: 35%;
+}
+
+@media screen and (min-width: 1200px) {
+}
+
+@media screen and (min-width: 992px) and (max-width: 1199px) {
+}
+
+@media screen and (min-width: 768px) and (max-width: 991px) {
+}
+@media screen and (max-width: 767px) {
+	.home-navbar-box {
+		.el-row {
+			.not-show {
+				display: none;
+			}
+			.show {
+				.not-show-btn {
+					display: none;
+				}
+			}
+		}
+	}
 }
 </style>

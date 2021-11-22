@@ -188,8 +188,6 @@ export default {
 			margin-left: 12px;
 			margin-bottom: 22px;
 		}
-		.desc-blog {
-		}
 	}
 	#markdown {
 		height: 100%;

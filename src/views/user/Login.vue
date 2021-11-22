@@ -42,7 +42,6 @@
 									<router-link
 										:to="{ name: 'Forgot' }"
 										class="rlf-forget"
-										target="_blank"
 										hidefocus="true"
 										>忘记密码&nbsp;|&nbsp;</router-link
 									>
@@ -56,9 +55,10 @@
 										</span>
 									</el-dialog>
 								</div>
-								<el-button type="primary" @click="submitForm('formLogin')" class="btn-login"
-									>立即登录</el-button
-								>
+								<!-- <input class="item-input" @keydown.enter="submitForm('formLogin')" /> -->
+								<el-button type="primary" class="btn-login" @click="submitForm('formLogin')"
+									>立即登录
+								</el-button>
 							</el-form>
 							<!-- //登录表单 -->
 						</el-tab-pane>
@@ -205,7 +205,6 @@ export default {
 						if (res.data.code === CREATED) {
 							this.$message.success('请查收验证码')
 							this.code = res.data.body.verify_code
-							console.log(this.code)
 						}
 					},
 					(error) => {
@@ -251,7 +250,7 @@ export default {
 				.then(
 					(res) => {
 						if (res.data.code === CREATED) {
-							console.log(res.data.body.access)
+							// console.log(res.data.body.access)
 							window.localStorage.setItem('access', 'Bearer ' + res.data.body.access)
 							// this.$store.commit('updateUserinfo', res.data)
 							Message({
@@ -264,6 +263,14 @@ export default {
 						}
 					},
 					(error) => {
+						if (error.response.status === 404) {
+							Message({
+								message: error.response.data.message,
+								type: 'error',
+								duration: 5000,
+								showClose: true,
+							})
+						}
 						this.formLogin.username = ''
 						this.formLogin.pwd = ''
 					}
@@ -284,6 +291,14 @@ export default {
 						}
 					},
 					(error) => {
+						if (error.response.status === 404) {
+							Message({
+								message: error.response.data.message,
+								type: 'error',
+								duration: 5000,
+								showClose: true,
+							})
+						}
 						this.formLogin.username = ''
 						this.formLogin.pwd = ''
 					}
@@ -316,6 +331,9 @@ export default {
 <style lang="less">
 .page-login {
 	text-align: center;
+	.el-col {
+		overflow-y:hidden;
+	}
 	.login-form {
 		margin-top: 40px;
 		background-color: rgb(246, 248, 250);
@@ -350,11 +368,23 @@ export default {
 			color: #5e5e5e;
 		}
 	}
+	.item-input {
+		cursor: pointer;
+		position: absolute;
+		bottom: 0;
+		left: 170px;
+		width: 98px;
+		height: 40px;
+		border: 1px solid #ccc;
+		opacity: 0;
+		z-index: 5;
+	}
 	.tips {
 		margin-top: 20px;
 		font-size: 14px;
 	}
 	.btn-login {
+		z-index: 110;
 		border-radius: 20px;
 	}
 	.el-form-item__content {
