@@ -53,7 +53,10 @@
 							:scrollStyle="prop.scrollStyle"
 							:boxShadow="prop.boxShadow"
 							:navigation="prop.navigation"
+							:codeStyle="prop.codeStyle"
 							:previewBackground="prop.previewBackground"
+							:ishljs="prop.ishljs"
+							:externalLink="externalLink"
 							ref="md"
 						/>
 					</div>
@@ -67,15 +70,15 @@
 						</div>
 
 						<div class="commentor">
-							<el-form ref="form" :model="form" label-width="109px">
-								<el-form-item label="Your Name：">
+							<el-form ref="form" :model="form" :rules="rulesComment">
+								<el-form-item prop="username">
 									<el-input
 										v-model="form.nickname"
 										placeholder="请留下您的名称"
 										size="medium"
 									></el-input>
 								</el-form-item>
-								<el-form-item label="Your Message：">
+								<el-form-item prop="content">
 									<el-input
 										v-model="form.message"
 										placeholder="说点什么吧..."
@@ -136,15 +139,15 @@
 									<!-- <i class="el-icon-s-flag reply-comment">举报</i> -->
 								</div>
 								<div class="commentor">
-									<el-form ref="form1" :model="form1" label-width="109px">
-										<el-form-item label="Your Name：">
+									<el-form ref="form1" :model="form1">
+										<el-form-item>
 											<el-input
 												v-model="form1.nickname"
 												placeholder="请留下您的名称"
 												size="medium"
 											></el-input>
 										</el-form-item>
-										<el-form-item label="Your Message：">
+										<el-form-item>
 											<el-input
 												v-model="form1.message"
 												placeholder="对他有话要说？"
@@ -277,6 +280,36 @@ import { Host } from '@/utils/constants'
 export default {
 	data() {
 		return {
+			rulesComment: {
+				// username: [{ required: true, message: '昵称不能为空', trigger: 'blur' }],
+				// content: [{ required: true, message: '评论内容不能为空', trigger: 'blur' }],
+			},
+			externalLink: {
+				markdown_css: function() {
+					// 这是你的markdown css文件路径
+					return '/mavon-editor/markdown/github-markdown.min.css'
+				},
+				hljs_js: function() {
+					// 这是你的hljs文件路径
+					return '/mavon-editor/highlightjs/highlight.min.js'
+				},
+				hljs_css: function(css) {
+					// 这是你的代码高亮配色文件路径
+					return '/mavon-editor/highlightjs/styles/' + css + '.min.css'
+				},
+				hljs_lang: function(lang) {
+					// 这是你的代码高亮语言解析路径
+					return '/mavon-editor/highlightjs/languages/' + lang + '.min.js'
+				},
+				katex_css: function() {
+					// 这是你的katex配色方案路径路径
+					return '/mavon-editor/katex/katex.min.css'
+				},
+				katex_js: function() {
+					// 这是你的katex.js路径
+					return '/mavon-editor/katex/katex.min.js'
+				},
+			},
 			user: {
 				nickname: '',
 				avatar: '',
@@ -336,6 +369,8 @@ export default {
 				boxShadow: false, //边框
 				previewBackground: '#fff',
 				navigation: false,
+				codeStyle: '',
+				ishljs: true,
 			}
 			return data
 		},
@@ -427,7 +462,6 @@ export default {
 						this.reload()
 					}
 				})
-			// }
 		},
 		postCommentList() {
 			ajax
@@ -537,10 +571,17 @@ export default {
 		this.getNewCommentList()
 		this.getRandomBlog()
 	},
+	mounted() {
+		this.prop.codeStyle = 'atom-one-dark'
+	},
 }
 </script>
 
 <style lang="less">
+.markdown-body .highlight pre,
+.markdown-body pre {
+	padding: 0;
+}
 .blog-detail {
 	padding-top: 40px;
 	font-family: 'Consolas', 'Microsoft JhengHei', 'Apple LiGothic Medium,Microsoft YaHei', '微软雅黑',

@@ -1,7 +1,7 @@
 <template>
 	<div class="page-register">
-		<el-row>
-			<el-col :span="8" :offset="8">
+		<el-row type="flex" justify="space-around">
+			<el-col :md="12" :xs="23" :sm="14" :lg="8" :xl="8">
 				<el-alert title="游客您好，欢迎注册！" type="success" center></el-alert>
 				<div class="login-form">
 					<!-- 登陆头区域 -->

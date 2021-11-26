@@ -1,7 +1,7 @@
 <template>
 	<div class="page-login">
-		<el-row>
-			<el-col :span="8" :offset="8">
+		<el-row type="flex" justify="space-around">
+			<el-col :md="12" :xs="23" :sm="14" :lg="8" :xl="8">
 				<el-alert title="游客您好，欢迎登录！" type="success" center></el-alert>
 				<div class="login-form">
 					<el-tabs v-model="activeName">
@@ -28,7 +28,7 @@
 										autocomplete="off"
 									></el-input>
 								</el-form-item>
-								<el-form-item label="密码" size="small" prop="pwd">
+								<el-form-item label="密码" size="small" prop="pwd" class="pwd-item">
 									<el-input
 										v-model="formLogin.pwd"
 										placeholder="请输入密码"
@@ -340,6 +340,9 @@ export default {
 		border-radius: 20px;
 		box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
 		padding: 10px 30px;
+		.pwd-item {
+			margin-bottom: 10px;
+		}
 	}
 	.login-header {
 		text-align: center;
@@ -351,6 +354,7 @@ export default {
 	}
 	.forget-pwd {
 		text-align: right;
+		margin-bottom: 7px;
 		.rlf-forget {
 			text-decoration: none;
 			color: #9199a1;

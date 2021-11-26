@@ -294,7 +294,7 @@ export default {
 		}
 		.el-button--danger {
 			background-color: #fb7299;
-			margin-left: 30px;
+			margin-left: 10px;
 		}
 		.el-button--danger span:hover {
 			color: rgb(94, 2, 2);

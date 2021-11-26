@@ -217,6 +217,18 @@ export default {
 					color: '#5073e9',
 					placement: 'top',
 				},
+				{
+					content: '解决Markdown显示问题',
+					timestamp: '2021-11-25',
+					color: '#5073e9',
+					placement: 'top',
+				},
+				{
+					content: '解决评论区Bug',
+					timestamp: '2021-11-27',
+					color: '#5073e9',
+					placement: 'top',
+				},
 			],
 			notice: '网站正在开发中，请积极反馈BUG~',
 			tagList: [],
@@ -272,13 +284,12 @@ export default {
 		handleCurrentChange(val) {
 			let top = document.getElementById('home-search-box')
 			this.current_page = val
+			// this.reload()
 			this.getBlogList()
 			setTimeout(() => {
 				//设置延迟执行
-				top.scrollIntoView({
-					behavior: 'smooth', // 平滑过渡
-				})
-			}, 30)
+				top.scrollIntoView()
+			}, 10)
 		},
 		getBlogList() {
 			ajax
@@ -440,7 +451,7 @@ export default {
 				let that = this
 				setTimeout(function() {
 					// 打印screenWidth变化的值
-					console.log(that.screenWidth)
+					// console.log(that.screenWidth)
 					that.timer = false
 				}, 400)
 			}
