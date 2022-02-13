@@ -20,7 +20,7 @@
 					style="background-color:rgb(255, 255, 255)"
 				></el-avatar>
 				<router-link :to="{ name: 'Home' }" style="text-decoration:none;color:black;"
-					><span>技术博客</span></router-link
+					><span>技术文章</span></router-link
 				>
 			</el-col>
 			<el-col :span="3" :md="3" :xs="0" :sm="0" class="item not-show hidden-sm-only">
@@ -77,7 +77,6 @@
 						<el-dropdown-item
 							><span @click="dialogFormVisible = true"><i class="el-icon-user"></i>意见反馈</span>
 						</el-dropdown-item>
-
 						<el-dialog title="意见反馈" :append-to-body="true" :visible.sync="dialogFormVisible">
 							<el-form :model="form" :rules="adviceRules" status-icon>
 								<el-form-item label="您的姓名" :label-width="formLabelWidth" prop="name">

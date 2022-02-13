@@ -65,11 +65,21 @@
 										<el-image :src="blogitem.img" fit="fill"> </el-image>
 									</div>
 									<div class="not-content blog-right">
-										{{ blogitem.desc }}
+										<router-link
+											:to="{ name: 'BlogDetail', params: { id: blogitem.id } }"
+											target="_blank"
+											style="text-decoration: none;color:black;"
+											>{{ blogitem.desc }}</router-link
+										>
 									</div>
 								</div>
 								<div class="not-content" style="line-height:25px;font-size:15px;" v-else>
-									{{ blogitem.desc }}
+									<router-link
+										:to="{ name: 'BlogDetail', params: { id: blogitem.id } }"
+										target="_blank"
+										style="text-decoration: none;color:black;"
+										>{{ blogitem.desc }}</router-link
+									>
 								</div>
 								<span class="time">
 									<div style="color: #999;font-size:12.5px;">
@@ -191,6 +201,9 @@
 				</div>
 			</el-col>
 		</el-row>
+		<div class="beian">
+			<a href="https://beian.miit.gov.cn/" target="_blank">蜀ICP备2021028862号</a>
+		</div>
 	</div>
 </template>
 
@@ -479,6 +492,18 @@ export default {
 </script>
 
 <style lang="less">
+.beian {
+	// background-color: #bfc1c7;
+	color: #7b757c;
+	text-align: center;
+	font-size: 13.5px;
+	margin-top: 20px;
+	margin-bottom: 3px;
+	a {
+		text-decoration: none;
+		color: #7b757c;
+	}
+}
 .home-search-box {
 	overflow-x: hidden;
 	padding: 0 18px;
@@ -486,7 +511,6 @@ export default {
 	font-family: 'Consolas', 'Microsoft JhengHei', 'Apple LiGothic Medium,Microsoft YaHei', '微软雅黑',
 		'Arial', sans-serif;
 	padding-top: 55px;
-
 	.left {
 		.content-notice {
 			margin-bottom: 15px;
@@ -703,8 +727,6 @@ export default {
 		}
 		.pagination {
 			.el-pagination {
-				padding-top: 10px;
-				padding-bottom: 5px;
 				text-align: center;
 			}
 		}
